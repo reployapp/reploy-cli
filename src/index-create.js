@@ -4,9 +4,8 @@ import program from 'commander';
 import { spawnSync } from 'child_process';
 import path from 'path';
 import superagent from 'superagent';
-import config from 'home-config';
+import {appConf} from './environment';
 
-var appConf = config.load(path.join(process.cwd(), ".reploy"));
 
 if (appConf.app && appConf.app.id) {
 
