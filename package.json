@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Update and manage your React Native application versions",
   "author": "Joshua Sierles",
-  "main": "lib/index.js",
+  "main": "lib/reploy.js",
   "scripts": {
     "build": "rm -rf ./lib && babel -d lib/ src/ && chmod 755 lib/*",
     "watch": "babel -d lib/ src/ --watch",
@@ -22,6 +22,6 @@
     "babel": "^5.6.14"
   },
   "bin": {
-    "reploy": "lib/index.js"
+    "reploy": "lib/reploy.js"
   }
 }

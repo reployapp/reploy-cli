@@ -5,5 +5,6 @@ import fs  from 'fs';
 
 module.exports = {
   appConf: config.load(path.join(process.cwd(), ".reploy")),
-  appVersion: plist.parse(fs.readFileSync(path.join(process.cwd(), 'iOS/Info.plist'), 'utf8')).CFBundleShortVersionString
+  appVersion: plist.parse(fs.readFileSync(path.join(process.cwd(), 'iOS/Info.plist'), 'utf8')).CFBundleShortVersionString,
+  appName: path.basename(process.cwd())
 }
