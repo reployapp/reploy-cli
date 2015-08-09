@@ -4,7 +4,7 @@ import program from 'commander';
 import { spawnSync } from 'child_process';
 import path from 'path';
 import superagent from 'superagent';
-import {appConf, appName} from './environment';
+import {globalConf, appConf, appName} from './environment';
 
 
 if (appConf.app && appConf.app.id) {
@@ -13,13 +13,17 @@ if (appConf.app && appConf.app.id) {
 
 } else {
 
-  superagent.post('http://reploy.io/apps')
+  superagent.post(`http://reploy.io/api/v1/apps`)
+    .set("X-ApiId", globalConf.apiId)
+    .set("X-ApiSecret", globalConf.apiSecret)
     .send({name: appName})
     .end(function(err, response) {
 
       if (response.ok) {
         appConf.app = {
-          id: response.body.id
+          id: response.body.id,
+          apiId: response.body.api_id,
+          apiSecret: response.body.api_secret
         }
         appConf.save();
         console.log(`Created app with name ${appName} and id ${response.body.id}`);

@@ -12,7 +12,9 @@ if (!appConf.app) {
 
 } else {
 
-  superagent.get(`http://reploy.io/apps/${appConf.app.id}/${appVersion}/js_versions`)
+  superagent.get(`http://localhost:9393/api/v1/apps/${appConf.app.id}/${appVersion}/js_versions`)
+    .set("X-ApiId", appConf.app.apiId)
+    .set("X-ApiSecret", appConf.app.apiSecret)
     .end(function(err, response) {
 
       if (response.ok) {

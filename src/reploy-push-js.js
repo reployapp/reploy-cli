@@ -22,10 +22,11 @@ if (program.skip_bundle) {
 }
 
 console.log("Uploading bundle...")
-var url = `http://reploy.io/apps/${appConf.app.id}/${appVersion}/js_versions`;
+var url = `http://reploy.io/api/v1/apps/${appConf.app.id}/${appVersion}/js_versions`;
 
-request
-  .post(url)
+request.post(url)
+  .set("X-ApiId", appConf.app.apiId)
+  .set("X-ApiSecret", appConf.app.apiSecret)
   .attach('jsbundle', path.join(process.cwd(), 'iOS/main.jsbundle'))
   .end(function(err, res) {
     if (res.ok) {
