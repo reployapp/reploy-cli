@@ -6,7 +6,7 @@ import path from 'path';
 import config from 'home-config';
 import fs  from 'fs';
 import request from 'superagent';
-import {appConf, appVersion} from './environment';
+import {globalConf, appConf, appVersion} from './environment';
 
 program
   .option('-s, --skip_bundle', 'Skip javascript bundle step')
@@ -25,8 +25,8 @@ console.log("Uploading bundle...")
 var url = `http://reploy.io/api/v1/apps/${appConf.app.id}/${appVersion}/js_versions`;
 
 request.post(url)
-  .set("X-ApiId", appConf.app.apiId)
-  .set("X-ApiSecret", appConf.app.apiSecret)
+  .set("X-ApiId", globalConf.apiId)
+  .set("X-ApiSecret", globalConf.apiSecret)
   .attach('jsbundle', path.join(process.cwd(), 'iOS/main.jsbundle'))
   .end(function(err, res) {
     if (res.ok) {

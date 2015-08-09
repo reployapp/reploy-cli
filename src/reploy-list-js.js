@@ -3,7 +3,7 @@
 import program from 'commander';
 import superagent from 'superagent';
 import config from 'home-config';
-import {appConf, appVersion} from './environment';
+import {globalConf, appConf, appVersion} from './environment';
 import timeago from 'timeago';
 
 if (!appConf.app) {
@@ -13,8 +13,8 @@ if (!appConf.app) {
 } else {
 
   superagent.get(`http://reploy.io/api/v1/apps/${appConf.app.id}/${appVersion}/js_versions`)
-    .set("X-ApiId", appConf.app.apiId)
-    .set("X-ApiSecret", appConf.app.apiSecret)
+    .set("X-ApiId", globalConf.apiId)
+    .set("X-ApiSecret", globalConf.apiSecret)
     .end(function(err, response) {
 
       if (response.ok) {
