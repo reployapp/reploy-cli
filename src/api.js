@@ -2,7 +2,7 @@ import {configFilename, globalConf} from './environment';
 import request from 'superagent-bluebird-promise';
 
 const CREDENTIALS = {"X-ApiId": globalConf.apiId, "X-ApiSecret": globalConf.apiSecret}
-const BASE_URL = process.env['REPLOY_ENV'] === 'development' ? "http://localhost:5544/api/v1" : "http://reploy.io/api/v1"
+const BASE_URL = process.env['REPLOY_ENV'] === 'development' ? "http://localhost:5544/api/v1" : "https://reploy.io/api/v1"
 
 if (!globalConf.apiId) {
   console.log(`It looks like you're not setup yet to use Reploy. Sign up at http://reploy.io or place your API configuration in ~/${configFileame}.!`);
