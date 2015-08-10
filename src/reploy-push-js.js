@@ -3,9 +3,8 @@
 import program from 'commander';
 import { spawnSync } from 'child_process';
 import path from 'path';
-import config from 'home-config';
 import fs  from 'fs';
-import request from 'superagent';
+import api from './api';
 import {globalConf, appConf, appVersion} from './environment';
 
 program
@@ -22,17 +21,20 @@ if (program.skip_bundle) {
 }
 
 console.log("Uploading bundle...")
-var url = `http://reploy.io/api/v1/apps/${appConf.app.id}/${appVersion}/js_versions`;
 
-request.post(url)
-  .set("X-ApiId", globalConf.apiId)
-  .set("X-ApiSecret", globalConf.apiSecret)
-  .attach('jsbundle', path.join(process.cwd(), 'iOS/main.jsbundle'))
-  .end(function(err, res) {
-    if (res.ok) {
-     console.log('Done!')
-     console.log(JSON.stringify(res.body));
-    } else {
-     console.log(res.body);
-    }
-  });
+api.post(`/apps/${appConf.app.id}/js_versions`,
+         {attachments: [
+           {field: 'jsbundle', path: path.join(process.cwd(), 'iOS/main.jsbundle')},
+           {field: 'package_json', path: path.join(process.cwd(), 'package.json')}
+         ]}
+    )
+    .then((response) => {
+      console.log('Version number: ' + response.body.version_number)
+      console.log('Bundle hash: ' + response.body.bundle_hash)
+    }, (response) => {
+      if (response.body && response.body.errors) {
+        console.log(response.body.errors)
+      } else {
+        console.log(response.res.error)
+      }
+    });

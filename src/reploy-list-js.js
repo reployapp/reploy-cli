@@ -1,10 +1,10 @@
 #!/usr/bin/env node --harmony
 
 import program from 'commander';
-import superagent from 'superagent';
 import config from 'home-config';
 import {globalConf, appConf, appVersion} from './environment';
 import timeago from 'timeago';
+import api from './api';
 
 if (!appConf.app) {
 
@@ -12,19 +12,14 @@ if (!appConf.app) {
 
 } else {
 
-  superagent.get(`http://reploy.io/api/v1/apps/${appConf.app.id}/${appVersion}/js_versions`)
-    .set("X-ApiId", globalConf.apiId)
-    .set("X-ApiSecret", globalConf.apiSecret)
-    .end(function(err, response) {
-
-      if (response.ok) {
-        response.body.map((version) => {
-          console.log(`${version.version_number} ${version.bundle_hash} ${timeago(new Date(version.created_at))}`);
-        });
-      } else {
-        console.log('Error!');
-        console.log(response);
-      }
-
+  api.get(`/apps/${appConf.app.id}/js_versions`)
+    .then((response) => {
+      response.body.map((version) => {
+        console.log(`${version.version_number} ${version.bundle_hash} ${timeago(new Date(version.created_at))}`);
+      });
+    }, (error) => {
+      console.log('Error!');
+      console.log(response);
     });
+
 }
