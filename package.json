@@ -16,6 +16,7 @@
     "home-config": "^0.1.0",
     "plist": "^1.1.0",
     "superagent": "^1.2.0",
+    "superagent-bluebird-promise": "^2.0.2",
     "timeago": "^0.2.0"
   },
   "devDependencies": {
