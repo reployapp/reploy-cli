@@ -16,6 +16,7 @@
     "commander": "2.8.1",
     "home-config": "^0.1.0",
     "plist": "^1.1.0",
+    "readline-sync": "^1.2.19",
     "superagent": "^1.2.0",
     "superagent-bluebird-promise": "^2.0.2",
     "timeago": "^0.2.0",

@@ -51,6 +51,22 @@ export const readApiSecretFromCLI = () => {
   );
 };
 
+export const readEmailFromCLI = () => {
+  cli.output('Enter your email address:');
+  return readLine(
+    (email) => val.isEmail(email),
+    'Please enter a valid email address'
+  );
+};
+
+export const readPasswordFromCLI = () => {
+  cli.output('Enter your email address:');
+  return readLine(
+    (email) => val.isEmail(email),
+    'Please enter a valid email address'
+  );
+};
+
 export const maybeUsePackageName = () => {
   let name;
   try {

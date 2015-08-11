@@ -1,17 +1,25 @@
 import {configFilename, globalConf} from './environment';
 import request from 'superagent-bluebird-promise';
+import cli from 'cli';
 
-const CREDENTIALS = {"X-ApiId": globalConf.auth.apiId, "X-ApiSecret": globalConf.auth.apiSecret}
-const BASE_URL = process.env['REPLOY_ENV'] === 'development' ? "http://localhost:5544/api/v1" : "https://reploy.io/api/v1"
+if (globalConf && globalConf.auth) {
 
-if (!globalConf.auth.apiId) {
-  console.log(`It looks like you're not setup yet to use Reploy. Sign up at http://reploy.io or place your API configuration in ~/${configFileame}.!`);
-  process.exit();
+  if (!globalConf.auth.apiId) {
+    cli.error(`It looks like you're not setup yet to use Reploy. Get started with: reploy setup`);
+    process.exit();
+  }
+
+  var CREDENTIALS = {"X-ApiId": globalConf.auth.apiId, "X-ApiSecret": globalConf.auth.apiSecret}
 }
+
+const BASE_URL = process.env['REPLOY_ENV'] === 'development' ? "http://localhost:5544/api/v1" : "https://reploy.io/api/v1"
 
 module.exports = {
   get: (path) => {
     return request.get(`${BASE_URL}${path}`).set(CREDENTIALS)
+  },
+  post_without_auth: (path, params) => {
+    return request.post(`${BASE_URL}${path}`).send(params)
   },
   post: (path, params) => {
     var req = request.post(`${BASE_URL}${path}`).set(CREDENTIALS)
