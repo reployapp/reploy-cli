@@ -10,7 +10,7 @@ npm install -g
 
 # Usage
 
-Sign up at http://reploy.io/oauth/github.
+Sign up at http://reploy.io/sign_up.
 
 Copy the credentials you see to ~/.reploy.
 
