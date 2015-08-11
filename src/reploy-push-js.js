@@ -5,7 +5,7 @@ import { spawnSync } from 'child_process';
 import path from 'path';
 import fs  from 'fs';
 import api from './api';
-import {globalConf, appConf, appVersion} from './environment';
+import {appConf, appVersion} from './environment';
 
 program
   .option('-s, --skip_bundle', 'Skip javascript bundle step')

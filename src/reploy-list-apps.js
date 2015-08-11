@@ -3,7 +3,6 @@
 import program from 'commander';
 import superagent from 'superagent';
 import config from 'home-config';
-import {globalConf, appConf, appVersion} from './environment';
 import timeago from 'timeago';
 import api from './api';
 

@@ -2,7 +2,7 @@
 
 import program from 'commander';
 import config from 'home-config';
-import {globalConf, appConf, appVersion} from './environment';
+import {appConf, appVersion} from './environment';
 import timeago from 'timeago';
 import api from './api';
 

@@ -3,7 +3,7 @@
 import program from 'commander';
 import { spawnSync } from 'child_process';
 import path from 'path';
-import {globalConf, appConf, appName} from './environment';
+import {appConf, appName} from './environment';
 import api from './api';
 
 
