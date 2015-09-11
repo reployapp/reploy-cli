@@ -8,9 +8,9 @@ import api from './api';
 import {appConf, appVersion} from './environment';
 
 program
+  .option('-r, --release_notes [notes]', 'Release notes for this version', null)
   .option('-s, --skip_bundle', 'Skip javascript bundle step')
   .parse(process.argv);
-
 
 if (program.skip_bundle) {
   console.log("Skipping javascript bundle step.")
@@ -19,15 +19,17 @@ if (program.skip_bundle) {
   var bundle = spawnSync('node', [path.join(process.cwd(), 'node_modules/react-native/local-cli/cli.js'), 'bundle']);
   console.log(bundle.stdout.toString());
 }
-
 console.log("Uploading bundle...")
 
-api.post(`/apps/${appConf.app.id}/js_versions`,
-         {attachments: [
-           {field: 'jsbundle', path: path.join(process.cwd(), 'iOS/main.jsbundle')},
-           {field: 'package_json', path: path.join(process.cwd(), 'package.json')}
-         ]}
-    )
+api.post(`/apps/${appConf.app.id}/js_versions`, {
+           fields: [
+             {name: 'release_notes',
+              value: program.release_notes}],
+           attachments: [
+             {field: 'jsbundle', path: path.join(process.cwd(), 'iOS/main.jsbundle')},
+             {field: 'package_json', path: path.join(process.cwd(), 'package.json')}
+           ]
+    })
     .then((response) => {
       console.log('Version number: ' + response.body.version_number)
       console.log('Bundle hash: ' + response.body.bundle_hash)

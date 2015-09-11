@@ -28,6 +28,12 @@ module.exports = {
       params.attachments.forEach((attachment) => {
         req.attach(attachment.field, attachment.path)
       })
+
+      if (params.fields) {
+        params.fields.forEach((field) => {
+          req.field(field.name, field.value)
+        })
+      }
       return req
     } else {
       return req.send(params)
