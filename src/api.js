@@ -1,48 +1,19 @@
 import {configFilename, globalConf} from './environment';
-import request from 'superagent-bluebird-promise';
 import cli from 'cli';
+import Reindex from 'reindex-js';
 
-if (globalConf && globalConf.auth) {
+// TODO: setup JWT in Reindex for new users for api authentication
 
-  if (!globalConf.auth.apiId) {
-    cli.error(`It looks like you're not setup yet to use Reploy. Get started with: reploy setup`);
-    process.exit();
-  }
+// if (globalConf && globalConf.auth) {
+//
+//   if (!globalConf.auth.apiId) {
+//     cli.error(`It looks like you're not setup yet to use Reploy. Get started with: reploy setup`);
+//     process.exit();
+//   }
+//
+//   var CREDENTIALS = {"X-ApiId": globalConf.auth.apiId, "X-ApiSecret": globalConf.auth.apiSecret}
+// }
 
-  var CREDENTIALS = {"X-ApiId": globalConf.auth.apiId, "X-ApiSecret": globalConf.auth.apiSecret}
-}
+const REINDEX_DATABASE = process.env['REPLOY_ENV'] === 'development' ? "practical-improvement-29" : "practical-improvement-29"
 
-const BASE_URL = process.env['REPLOY_ENV'] === 'development' ? "http://localhost:5544/api/v1" : "https://reploy.io/api/v1"
-
-module.exports = {
-  get: (path) => {
-    return request.get(`${BASE_URL}${path}`).set(CREDENTIALS)
-  },
-  post_without_auth: (path, params) => {
-    return request.post(`${BASE_URL}${path}`).send(params)
-  },
-  post: (path, params) => {
-    var req = request.post(`${BASE_URL}${path}`).set(CREDENTIALS)
-
-    if (params.attachments) {
-      params.attachments.forEach((attachment) => {
-        req.attach(attachment.field, attachment.path)
-      })
-
-      if (params.fields) {
-        params.fields.forEach((field) => {
-          req.field(field.name, field.value)
-        })
-      }
-      return req
-    } else {
-      return req.send(params)
-    }
-  },
-  put: (path) => {
-    return request.put(`${BASE_URL}${path}`).set(CREDENTIALS)
-  },
-  delete: (path) => {
-    return request.delete(`${BASE_URL}${path}`).set(CREDENTIALS)
-  }
-}
+export default new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);

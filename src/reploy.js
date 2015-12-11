@@ -8,6 +8,7 @@ program
   .command('setup', 'Configure credentials for the Reploy API')
   .command('list-apps', 'list javascript bundle versions')
   .command('create-app', 'Create this app on Reploy')
+  .command('push-binary', 'Push an application binary')
   .command('push-js', 'Build and push a javascript bundle')
   .command('list-js', 'list javascript bundle versions')
   .parse(process.argv);

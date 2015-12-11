@@ -5,7 +5,7 @@ import { spawnSync } from 'child_process';
 import path from 'path';
 import {appConf, appName} from './environment';
 import api from './api';
-
+import readlineSync from 'readline-sync';
 
 if (appConf.app && appConf.app.id) {
 
@@ -13,19 +13,29 @@ if (appConf.app && appConf.app.id) {
 
 } else {
 
-  api.post('/apps', {name: appName})
+  let name = readlineSync.question('Give this app a name:')
+
+  api.query(`
+    mutation createApp($input: _CreateApplicationInput!) {
+      createApplication(input: $input) {
+        id
+      }
+    }
+  `, {input: {name: name}})
   .then((response) => {
 
-    appConf.app = {
-      id: response.body.id,
-      apiId: response.body.api_id,
-      apiSecret: response.body.api_secret
-    }
-    appConf.save()
-    console.log(`Created app with name ${appName} and id ${response.body.id}`)
+    let appId = response.data.createApplication.id;
 
-  }, (response) => {
-    console.log('Error!')
-    console.log(response.res.error)
+    appConf.app = {
+      id: appId
+    }
+
+    appConf.save()
+
+    console.log(`Created app with name ${name} and id ${appId}`)
+
+  }).catch((error) => {
+    console.log(error)
   })
+
 }

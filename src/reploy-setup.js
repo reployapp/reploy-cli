@@ -12,17 +12,7 @@ import api from './api';
 if (!globalConf.auth) {
 
   var email = readlineSync.question('Enter your email address:')
-  var password = readlineSync.question('Enter a password:', {hideEchoBack: true})
-
-  api.post_without_auth('/users', {email: email, password: password})
-    .then((response) => {
-      globalConf.auth = {apiId: response.res.body.secret_id, apiSecret: response.res.body.secret}
-      globalConf.save()
-      cli.ok("You're all setup! Next, register your app from within its directory with: reploy create-app")
-    }, (error) => {
-      console.log(error.res.body);
-    });
-
+  // TODO: add an 'email verification code' to login here
 } else {
   cli.ok(`You're already setup for reploy! To start over, remove the ~/${configFilename} file.`)
 }
