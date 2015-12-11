@@ -6,37 +6,50 @@ import path from 'path';
 import fs  from 'fs';
 import api from './api';
 import {appConf, appVersion} from './environment';
+import {find, filter} from 'lodash';
+import homedir from 'os-homedir';
+import FormData from 'form-data';
+import superagent from 'superagent';
+import Progress from 'progress';
 
-program
-  .option('-r, --release_notes [notes]', 'Release notes for this version', null)
-  .option('-s, --skip_bundle', 'Skip javascript bundle step')
-  .parse(process.argv);
+let file = `${process.cwd()}/ios/main.jsbundle`;
 
-if (program.skip_bundle) {
-  console.log("Skipping javascript bundle step.")
-} else {
-  console.log("Starting bundle...");
-  var bundle = spawnSync('node', [path.join(process.cwd(), 'node_modules/react-native/local-cli/cli.js'), 'bundle']);
-  console.log(bundle.stdout.toString());
-}
-console.log("Uploading bundle...")
+let uploadcareId = null;
 
-api.post(`/apps/${appConf.app.id}/js_versions`, {
-           fields: [
-             {name: 'release_notes',
-              value: program.release_notes}],
-           attachments: [
-             {field: 'jsbundle', path: path.join(process.cwd(), 'iOS/main.jsbundle')},
-             {field: 'package_json', path: path.join(process.cwd(), 'package.json')}
-           ]
-    })
-    .then((response) => {
-      console.log('Version number: ' + response.body.version_number)
-      console.log('Bundle hash: ' + response.body.bundle_hash)
-    }, (response) => {
-      if (response.body && response.body.errors) {
-        console.log(response.body.errors)
-      } else {
-        console.log(response.res.error)
-      }
-    });
+let bar = new Progress(':percent uploaded', { total: fs.statSync(file).size });
+
+superagent.post('https://upload.uploadcare.com/base/')
+  .field("UPLOADCARE_PUB_KEY", '9e1ace5cb5be7f20d38a')
+  .attach('file', file)
+  .on('progress', (progress) => {
+
+    if (!bar.complete) {
+      bar.tick(progress.loaded)
+    } else {
+      console.log("Waiting for upload to be processed...")
+    }
+
+  })
+  .end((err, response) => {
+    if (err) {
+      console.log(err);
+    } else {
+      uploadcareId = response.body.file;
+      api.query(`
+        mutation createJSBundle($input: _CreateJSBundleInput!) {
+          createJSBundle(input: $input) {
+            id,
+            application {
+              name
+            }
+          }
+        }
+      `, {input: {uploadId: uploadcareId, application: appConf.app.id, createdAt: "@TIMESTAMP"}})
+      .then((response) => {
+        console.log(response)
+        console.log("JSBundle uploaded!")
+      }).catch((error) => {
+        console.log(error);
+      })
+    }
+  })

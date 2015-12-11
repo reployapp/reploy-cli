@@ -59,15 +59,15 @@ superagent.post('https://upload.uploadcare.com/base/')
       console.log(err);
     } else {
       uploadcareId = response.body.file;
-      console.log(uploadcareId);
       api.query(`
         mutation createBinaryUpload($input: _CreateBinaryUploadInput!) {
           createBinaryUpload(input: $input) {
             id
           }
         }
-      `, {input: {uploadId: uploadcareId, application: appConf.app.id}})
+      `, {input: {uploadId: uploadcareId, application: appConf.app.id, createdAt: "@TIMESTAMP"}})
       .then((response) => {
+        console.log(response)
         console.log("Binary uploaded!")
       }).catch((error) => {
         console.log(error);
