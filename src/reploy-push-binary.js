@@ -28,12 +28,15 @@ let simulatorBuildPaths = filter(fs.readdirSync(buildDir), (path) => {
 });
 
 simulatorBuildPaths.sort(function(a, b) {
-  return fs.statSync(buildDir + a).mtime.getTime() - fs.statSync(buildDir + b).mtime.getTime();
+  return fs.statSync(`${buildDir}/${b}`).mtime.getTime() - fs.statSync(`${buildDir}/${a}`).mtime.getTime();
 });
 
 let latestPath = simulatorBuildPaths[0];
+console.log(latestPath)
 let zipFile = `/tmp/${projectName}.zip`;
-fs.unlinkSync(zipFile)
+if (fs.existsSync(zipFile)) {
+  fs.unlinkSync(zipFile)
+}
 process.chdir(`${buildDir}/${latestPath}/Build/Products/Debug-iphonesimulator`);
 let zip = spawnSync('zip', ['-r', zipFile,  '.'])
 console.log(zip.stdout.toString())
@@ -44,6 +47,7 @@ let bar = new Progress(':percent uploaded', { total: fs.statSync(zipFile).size }
 
 superagent.post('https://upload.uploadcare.com/base/')
   .field("UPLOADCARE_PUB_KEY", '9e1ace5cb5be7f20d38a')
+  .field("UPLOADCARE_STORE", '1')
   .attach('file', zipFile)
   .on('progress', (progress) => {
 
