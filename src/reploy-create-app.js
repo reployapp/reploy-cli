@@ -9,11 +9,11 @@ import readlineSync from 'readline-sync';
 
 if (appConf.app && appConf.app.id) {
 
-  console.log("You already created this app. It's id is " + appConf.app.id);
+  console.log("You already created this app. Its id is " + appConf.app.id);
 
 } else {
 
-  let name = readlineSync.question('Give this app a name:')
+  let name = readlineSync.question('Give this app a name: ')
 
   api.query(`
     mutation createApp($input: _CreateApplicationInput!) {
@@ -24,6 +24,7 @@ if (appConf.app && appConf.app.id) {
   `, {input: {name: name}})
   .then((response) => {
 
+    console.log(response)
     let appId = response.data.createApplication.id;
 
     appConf.app = {

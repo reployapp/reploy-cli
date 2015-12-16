@@ -16,4 +16,21 @@ import Reindex from 'reindex-js';
 
 const REINDEX_DATABASE = process.env['REPLOY_ENV'] === 'development' ? "practical-improvement-29" : "practical-improvement-29"
 
-export default new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
+let db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
+
+export default db;
+
+export function getApplication(id) {
+  db.query(`{
+    getApplication(id: ${id}) {
+      id,
+      appetizeId
+    }
+  }`)
+  .then((response) => {
+    return response.data.getApplication
+  })
+  .catch((error) => {
+    console.log(error)
+  })
+}
