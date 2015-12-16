@@ -12,23 +12,23 @@ import FormData from 'form-data';
 import superagent from 'superagent';
 import Progress from 'progress';
 
-let file = `${process.cwd()}/ios/main.jsbundle`;
+const jsPath = `/tmp/${appConf.app.id}.jsbundle`;
+
+console.log("Bundling javascript...")
+spawnSync("react-native", ["bundle", "--entry-file", "./index.ios.js", "--platform", "ios", "--bundle-output", jsPath])
+console.log("Done!")
 
 let uploadcareId = null;
 
-let bar = new Progress(':percent uploaded', { total: fs.statSync(file).size });
+let bar = new Progress(':percent uploaded', { total: fs.statSync(jsPath).size });
 
 superagent.post('https://upload.uploadcare.com/base/')
   .field("UPLOADCARE_PUB_KEY", '9e1ace5cb5be7f20d38a')
-  .attach('file', file)
+  .attach('file', jsPath)
   .on('progress', (progress) => {
-
     if (!bar.complete) {
       bar.tick(progress.loaded)
-    } else {
-      console.log("Waiting for upload to be processed...")
     }
-
   })
   .end((err, response) => {
     if (err) {
@@ -46,8 +46,7 @@ superagent.post('https://upload.uploadcare.com/base/')
         }
       `, {input: {uploadId: uploadcareId, application: appConf.app.id, createdAt: "@TIMESTAMP"}})
       .then((response) => {
-        console.log(response)
-        console.log("JSBundle uploaded!")
+        console.log("Done!")
       }).catch((error) => {
         console.log(error);
       })
