@@ -24,6 +24,7 @@ let bar = new Progress(':percent uploaded', { total: fs.statSync(jsPath).size })
 
 superagent.post('https://upload.uploadcare.com/base/')
   .field("UPLOADCARE_PUB_KEY", '9e1ace5cb5be7f20d38a')
+  .field("UPLOADCARE_STORE", '1')
   .attach('file', jsPath)
   .on('progress', (progress) => {
     if (!bar.complete) {
