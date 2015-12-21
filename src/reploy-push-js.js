@@ -15,7 +15,9 @@ import Progress from 'progress';
 const jsPath = `/tmp/${appConf.app.id}.jsbundle`;
 
 console.log("Bundling javascript...")
-spawnSync("react-native", ["bundle", "--entry-file", "./index.ios.js", "--platform", "ios", "--bundle-output", jsPath])
+let bundleCommand = spawnSync("react-native", ["bundle", "--entry-file", "./index.ios.js", "--platform", "ios", "--bundle-output", jsPath])
+console.log(bundleCommand.stdout.toString())
+console.log(bundleCommand.stderr.toString())
 console.log("Done!")
 
 let uploadcareId = null;

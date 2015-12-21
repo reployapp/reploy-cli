@@ -17,7 +17,6 @@ import Reindex from 'reindex-js';
 const REINDEX_DATABASE = process.env['REPLOY_ENV'] === 'development' ? "practical-improvement-29" : "practical-improvement-29"
 
 let db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
-
 export default db;
 
 export function getApplication(id) {
