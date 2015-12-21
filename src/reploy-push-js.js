@@ -16,13 +16,10 @@ const jsPath = `/tmp/${appConf.app.id}.jsbundle`;
 
 console.log("Bundling javascript...")
 let bundleCommand = spawnSync("react-native", ["bundle", "--entry-file", "./index.ios.js", "--platform", "ios", "--bundle-output", jsPath])
+
 if (bundleCommand.stderr) {
   console.log(bundleCommand.stderr.toString())
-  process.exit(1);
-} else {
-  console.log("Done!")  
 }
-
 
 let uploadcareId = null;
 
