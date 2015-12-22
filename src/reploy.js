@@ -1,7 +1,7 @@
 #!/usr/bin/env node --harmony
 
-var program = require('commander');
-
+import program from 'commander';
+import 'babel-polyfill';
 
 program
   .version('0.1.0')
@@ -12,4 +12,5 @@ program
   .command('push-js', 'Build and push a javascript bundle')
   .command('list-js', 'List javascript bundle versions')
   .command('query', 'Run a graphql query from a file')
+  .command('delete-all', 'Delete all data!')
   .parse(process.argv);

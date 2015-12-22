@@ -1,6 +1,7 @@
 import {configFilename, globalConf} from './environment';
 import cli from 'cli';
 import Reindex from 'reindex-js';
+import process from 'process';
 
 // TODO: setup JWT in Reindex for new users for api authentication
 
@@ -17,6 +18,14 @@ import Reindex from 'reindex-js';
 const REINDEX_DATABASE = process.env['REPLOY_ENV'] === 'development' ? "practical-improvement-29" : "practical-improvement-29"
 
 let db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
+
+if (process.env["REINDEX_TOKEN"]) {
+  db.setToken(process.env["REINDEX_TOKEN"])
+} else {
+  console.log("Please set REINDEX_TOKEN in your shell environment.")
+  process.exit(1);
+}
+
 export default db;
 
 export function getApplication(id) {
