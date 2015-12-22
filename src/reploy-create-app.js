@@ -4,7 +4,7 @@ import program from 'commander';
 import { spawnSync } from 'child_process';
 import path from 'path';
 import {appConf, appName} from './environment';
-import {mutation} from './api';
+import {mutation, query} from './api';
 import readlineSync from 'readline-sync';
 
 async function run() {
@@ -15,10 +15,12 @@ async function run() {
   } else {
 
     let name = readlineSync.question('Give this app a name: ')
+    let result = await query("user { id }")
     let app = await mutation("createApplication", {name: name});
 
       appConf.app = {
-        id: app.id
+        id: app.id,
+        user: result.user.id
       }
 
       appConf.save()

@@ -42,7 +42,12 @@ export async function getApplication(id) {
 export async function query(query) {
   try {
     let result = await db.query(`{viewer{${query}}}`);
-    return result.data.viewer;
+    if (result.errors) {
+      console.log(result.errors);
+      process.exit(1);
+    } else {
+      return result.data.viewer;
+    }
   } catch (error) {
     console.log(error);
     process.exit(1);
@@ -62,8 +67,13 @@ export async function mutation(name, input) {
         }
       }
     `, {input: input});
-    console.log(result.data[name])
-    return result.data[name];
+
+    if (result.errors) {
+      console.log(result.errors);
+      process.exit(1);
+    } else {
+      return result.data[name];
+    }
   } catch (error) {
     console.log(error);
     process.exit(1);

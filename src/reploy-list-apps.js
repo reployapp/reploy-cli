@@ -6,7 +6,7 @@ import 'babel-polyfill';
 
 async function run() {
   try {
-    let user = await query(`
+    let result = await query(`
         user {
           applications {
             edges {
@@ -16,7 +16,8 @@ async function run() {
             }
           }
         }`);
-    user.applications.edges.forEach((app) => {
+
+    result.user.applications.edges.forEach((app) => {
       console.log(app.node.name)
     });
   } catch(error) {
