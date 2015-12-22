@@ -1,23 +1,27 @@
 #!/usr/bin/env node --harmony
 
 import program from 'commander';
-import api from './api';
+import {query} from './api';
+import 'babel-polyfill';
 
-
-api.query(`query {
-  viewer {
-    allApplications {
-      edges {
-        node {
-          name
-        }
-      }
-    }
+async function run() {
+  try {
+    let user = await query(`
+        user {
+          applications {
+            edges {
+              node {
+                name
+              }
+            }
+          }
+        }`);
+    user.applications.edges.forEach((app) => {
+      console.log(app.node.name)
+    });
+  } catch(error) {
+    console.log(error);
   }
-}`).then((result) => {
-  result.data.viewer.allApplications.edges.forEach((app) => {
-    console.log(app.node.name)
-  })
-}).catch((error) => {
-  console.log(error)
-})
+}
+
+run();

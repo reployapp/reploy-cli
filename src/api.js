@@ -2,6 +2,7 @@ import {configFilename, globalConf} from './environment';
 import cli from 'cli';
 import Reindex from 'reindex-js';
 import process from 'process';
+import 'babel-polyfill';
 
 // TODO: setup JWT in Reindex for new users for api authentication
 
@@ -28,17 +29,43 @@ if (process.env["REINDEX_TOKEN"]) {
 
 export default db;
 
-export function getApplication(id) {
-  db.query(`{
+export async function getApplication(id) {
+  let response = await query(`{
     getApplication(id: ${id}) {
       id,
       appetizeId
     }
   }`)
-  .then((response) => {
-    return response.data.getApplication
-  })
-  .catch((error) => {
-    console.log(error)
-  })
+  return response.data.getApplication;
+}
+
+export async function query(query) {
+  try {
+    let result = await db.query(`{viewer{${query}}}`);
+    return result.data.viewer;
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+}
+
+function capitalize(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export async function mutation(name, input) {
+  try {
+    let result = await db.query(`
+      mutation ${name}($input: _${capitalize(name)}Input!) {
+        ${name}(input: $input) {
+          id
+        }
+      }
+    `, {input: input});
+    console.log(result.data[name])
+    return result.data[name];
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
 }

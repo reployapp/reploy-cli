@@ -4,7 +4,7 @@ import program from 'commander';
 import { spawnSync } from 'child_process';
 import path from 'path';
 import fs  from 'fs';
-import api, {getApplication} from './api';
+import {mutation} from './api';
 import {appConf, appVersion} from './environment';
 import {find, filter} from 'lodash';
 import homedir from 'os-homedir';
@@ -25,7 +25,7 @@ createBuildZipFile();
 const uploadId = uploadBuild((uploadId) => {
 
   createOnAppetize(uploadId, (response) => {
-    api.query(`
+    mutation(`
       mutation updateApplication($input: _UpdateApplicationInput!) {
         updateApplication(input: $input) {
           id
@@ -42,7 +42,7 @@ const uploadId = uploadBuild((uploadId) => {
 function addBuildtoReploy(uploadId) {
   console.log("Updating build on Reploy...")
 
-  api.query(`
+  mutation(`
     mutation createBinaryUpload($input: _CreateBinaryUploadInput!) {
       createBinaryUpload(input: $input) {
         id
