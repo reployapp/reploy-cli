@@ -20,10 +20,12 @@ const REINDEX_DATABASE = process.env['REPLOY_ENV'] === 'development' ? "practica
 
 let db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
 
-if (process.env["REINDEX_TOKEN"]) {
+if (process.env["REINDEX_ADMIN"]) {
   db.setToken(process.env["REINDEX_TOKEN"])
+} else if (process.env["REPLOY_TOKEN"]) {
+  db.setToken(process.env["REPLOY_TOKEN"])  
 } else {
-  console.log("Please set REINDEX_TOKEN in your shell environment.")
+  console.log("Please set REPLOY_TOKEN in your shell environment.")
   process.exit(1);
 }
 
