@@ -23,7 +23,7 @@ let db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
 if (process.env["REINDEX_ADMIN"]) {
   db.setToken(process.env["REINDEX_TOKEN"])
 } else if (process.env["REPLOY_TOKEN"]) {
-  db.setToken(process.env["REPLOY_TOKEN"])  
+  db.setToken(process.env["REPLOY_TOKEN"])
 } else {
   console.log("Please set REPLOY_TOKEN in your shell environment.")
   process.exit(1);
@@ -39,6 +39,11 @@ export async function getApplication(id) {
     }
   }`)
   return response.data.getApplication;
+}
+
+export async function currentUser() {
+  let response = await query(`user { id }`);
+  return response.user;
 }
 
 export async function query(query) {
