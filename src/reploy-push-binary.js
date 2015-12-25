@@ -38,11 +38,14 @@ async function run() {
 }
 
 async function addAppetizeIdToReploy(appetizeData) {
-  await mutation('updateApplication', {id: appConf.app.id, appetizePublicKey: appetizeData.publicKey, appetizePrivateKey: appetizeData.privateKey})
+  await mutation('updateApplication',
+    { id: appConf.app.id,
+      appetizePublicKeyIos: appetizeData.publicKey,
+      appetizePrivateKeyIos: appetizeData.privateKey})
 }
 
 async function addBuildtoReploy(uploadId) {
-  let response = await mutation("createBinaryUpload", {uploadId: uploadId, application: appConf.app.id, createdAt: "@TIMESTAMP"})
+  let response = await mutation("createBinaryUpload", {uploadId: uploadId, user: appConf.app.user, application: appConf.app.id, createdAt: "@TIMESTAMP"})
 }
 
 function projectName() {
