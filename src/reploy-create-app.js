@@ -17,7 +17,12 @@ async function run() {
     let name = readlineSync.question('Give this app a name: ')
     let result = await query("user { id }")
     console.log(result.user.id)
-    let app = await mutation("createApplication", {name: name, user: result.user.id});
+    let app = await mutation("createApplication", {
+      name: name,
+      user: result.user.id,
+      createdAt: '@TIMESTAMP',
+      updatedAt: '@TIMESTAMP',
+    });
 
       appConf.app = {
         id: app.id,
