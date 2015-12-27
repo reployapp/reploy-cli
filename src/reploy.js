@@ -9,6 +9,7 @@ program
   .command('list-apps', 'List javascript bundle versions')
   .command('create-app', 'Create this app on Reploy')
   .command('push-binary', 'Push an application binary')
+  .command('push-binary-android', 'Push an Android application binary')
   .command('push-js', 'Build and push a javascript bundle')
   .command('list-js', 'List javascript bundle versions')
   .command('query', 'Run a graphql query from a file')
