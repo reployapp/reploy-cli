@@ -32,13 +32,13 @@ if (process.env["REINDEX_ADMIN"]) {
 export default db;
 
 export async function getApplication(id) {
-  let response = await query(`{
-    getApplication(id: ${id}) {
+  let response = await query(`
+    applicationById(id: "${id}") {
       id,
-      appetizeId
-    }
-  }`)
-  return response.data.getApplication;
+      appetizePrivateKeyIos,
+      appetizePrivateKeyAndroid
+  }`, {viewer: false})
+  return response.applicationById;
 }
 
 export async function currentUser() {
@@ -46,14 +46,15 @@ export async function currentUser() {
   return response.user;
 }
 
-export async function query(query) {
+export async function query(query, options = {viewer: true}) {
+  let builtQuery = options.viewer ? `{viewer{${query}}}` : `{${query}}`;
   try {
-    let result = await db.query(`{viewer{${query}}}`);
+    let result = await db.query(builtQuery);
     if (result.errors) {
       console.log(result.errors);
       process.exit(1);
     } else {
-      return result.data.viewer;
+      return options.viewer ? result.data.viewer : result.data;
     }
   } catch (error) {
     console.log(error);

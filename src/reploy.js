@@ -13,4 +13,5 @@ program
   .command('list-js', 'List javascript bundle versions')
   .command('query', 'Run a graphql query from a file')
   .command('delete-all', 'Delete all data!')
+  .command('list-hooks', 'List Reindex webhooks')
   .parse(process.argv);
