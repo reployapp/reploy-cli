@@ -29,6 +29,8 @@ async function run() {
   try {
     let uploadId = await uploadBuild();
 
+    console.log("Updating build on Reploy...")
+
     if (application.appetizePrivateKeyIos) {
       await uploadToAppetize(uploadId, application.appetizePrivateKeyIos);
     } else {
@@ -36,7 +38,6 @@ async function run() {
       await addAppetizeIdToReploy(appetizeData);
     }
 
-    console.log("Updating build on Reploy...")
     addBuildtoReploy(uploadId);
   } catch (error) {
     console.log(error);
@@ -134,7 +135,7 @@ async function uploadToAppetize(uploadId, appetizePrivateKey = null) {
   }
 
   if (appetizePrivateKey) {
-    params['appetizePrivateKey'] = appetizePrivateKey
+    params['privateKey'] = appetizePrivateKey
   }
 
   try {
