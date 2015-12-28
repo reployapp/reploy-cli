@@ -8,11 +8,6 @@ import api from './api';
 import readlineSync from 'readline-sync';
 import fs from 'fs';
 
-global.load = function (file) {
-  var body = fs.readFileSync(file, {encoding:'utf8'});
-  eval.call(global, body);
-};
-
 program
   .option('-f, --file [file]', 'Path to graphql query file')
   .parse(process.argv);

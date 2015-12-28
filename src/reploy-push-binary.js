@@ -12,14 +12,18 @@ import FormData from 'form-data';
 import Progress from 'progress';
 import {capitalize} from './util';
 
-const platform = 'ios';
+program
+  .option('-p, --platform [platform]', 'Platform: "ios" or "android"')
+  .parse(process.argv);
+
+const platform = program.platform || 'ios';
 
 const superagent = require('superagent-promise')(require('superagent'), Promise);
 
 const buildDirIos = path.join(homedir(), '/Library/Developer/Xcode/DerivedData');
-const zipFileIos = `/tmp/${projectName()}-ios.zip`;
+const buildPathIos = `/tmp/${projectName()}-ios.zip`;
 
-const buildDirAndroid = path.join(process.cwd(), '/android/app/build/outputs/apk/');
+const buildPathAndroid = path.join(process.cwd(), '/android/app/build/outputs/apk/app-debug.apk');
 
 if (!appConf) {
   console.log('Please run first: reploy create-app');
@@ -27,14 +31,17 @@ if (!appConf) {
 }
 
 async function run() {
+
   if (platform == 'ios') {
     createBuildZipFile();
   }
 
+  const buildPath = platform == 'ios' ? buildPathIos : buildPathAndroid;
+
   let application = await getApplication(appConf.app.id);
 
   try {
-    let uploadId = await uploadBuild();
+    let uploadId = await uploadBuild(buildPath);
 
     console.log('Updating build on Reploy...');
     let appetizePrivateKey = application[`appetizePrivateKey${capitalize(platform)}`];
@@ -42,7 +49,7 @@ async function run() {
       await uploadToAppetize(uploadId, {appetizePrivateKey, platform});
     } else {
       let appetizeData = await uploadToAppetize(uploadId, {platform});
-      await addAppetizeIdToReploy(appetizeData);
+      await addAppetizeIdToReploy(appetizeData, platform);
     }
 
     addBuildtoReploy(uploadId);
@@ -51,12 +58,15 @@ async function run() {
   }
 }
 
-async function addAppetizeIdToReploy(appetizeData) {
-  await mutation('updateApplication',
-    { id: appConf.app.id,
-      appetizePublicKeyIos: appetizeData.publicKey,
-      appetizePrivateKeyIos: appetizeData.privateKey,
-    });
+async function addAppetizeIdToReploy(appetizeData, platform) {
+  let data = {
+    id: appConf.app.id,
+  };
+
+  data[`appetizePublicKey${capitalize(platform)}`] = appetizeData.publicKey;
+  data[`appetizePrivateKey${capitalize(platform)}`] = appetizeData.privateKey;
+
+  await mutation('updateApplication', data);
 }
 
 async function addBuildtoReploy(uploadId) {
@@ -104,22 +114,22 @@ function createBuildZipFile() {
     console.log(build.stdout.toString());
   }
 
-  if (fs.existsSync(zipFileIos)) {
-    fs.unlinkSync(zipFileIos);
+  if (fs.existsSync(buildPathIos)) {
+    fs.unlinkSync(buildPathIos);
   }
 
   process.chdir(`${buildDirIos}/${latestBuildPath()}/Build/Products/Debug-iphonesimulator`);
-  let zip = spawnSync('zip', ['-r', zipFileIos,  '.']);
+  let zip = spawnSync('zip', ['-r', buildPathIos,  '.']);
 }
 
-async function uploadBuild() {
+async function uploadBuild(filePath) {
 
-  let bar = new Progress(':percent uploaded', { total: fs.statSync(zipFileIos).size });
+  let bar = new Progress(':percent uploaded', { total: fs.statSync(buildPathIos).size });
 
   try {
     let response = await superagent.post('https://upload.uploadcare.com/base/')
       .field('UPLOADCARE_PUB_KEY', '9e1ace5cb5be7f20d38a')
-      .attach('file', zipFileIos)
+      .attach('file', filePath)
       .on('progress', (progress) => {
         if (!bar.completed) {
           bar.tick(progress.loaded);
