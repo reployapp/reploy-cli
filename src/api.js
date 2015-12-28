@@ -3,6 +3,7 @@ import cli from 'cli';
 import Reindex from 'reindex-js';
 import process from 'process';
 import 'babel-polyfill';
+import {capitalize} from './util';
 
 // TODO: setup JWT in Reindex for new users for api authentication
 
@@ -60,10 +61,6 @@ export async function query(query, options = {viewer: true}) {
     console.log(error);
     process.exit(1);
   }
-}
-
-function capitalize(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export async function mutation(name, input) {
