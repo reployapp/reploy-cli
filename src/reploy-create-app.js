@@ -24,15 +24,14 @@ async function run() {
       updatedAt: '@TIMESTAMP',
     });
 
-      appConf.app = {
-        id: app.id,
-        user: result.user.id
-      }
+    appConf.app = {
+      id: app.id,
+      user: result.user.id
+    }
 
-      appConf.save()
+    appConf.save()
 
-      console.log(`Created app with name ${name} and id ${app.id}`)
-
+    console.log(`Created app with name ${name} and id ${app.id}`)
   }
 }
 
