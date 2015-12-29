@@ -46,8 +46,9 @@ async function deleteAllDevices()  {
   }
 }
 
-async function createDevice(device) {
+async function createDevice(device, index) {
   return await mutation('createDevice', {
+    order: index,
     label: device.label,
     make: device.make,
     os: device.os,
