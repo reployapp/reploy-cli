@@ -104,22 +104,26 @@ function createBuildZipFile() {
 
   if (!latestBuildPath()) {
     console.error('No builds available. Building now...');
-    let build = spawnSync('xctool', ['CODE_SIGNING_REQUIRED=NO', 'CODE_SIGN_IDENTITY=', 'PROVISIONING_PROFILE=',
-                          '-destination', 'platform=iOS Simulator,name=iPhone 6,OS=9.2',
-                          '-sdk', 'iphonesimulator',
-                          '-project', `ios/${projectName()}.xcodeproj`,
-                          '-scheme', projectName(), 'build',
-                        ]);
-    console.log(build.stderr.toString());
-    console.log(build.stdout.toString());
+    let buildArguments = `xctool CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= PROVISIONING_PROFILE=
+                          -destination platform=iOS Simulator,name=iPhone 6,OS=9.2
+                          -sdk iphonesimulator
+                          -project ios/${projectName()}.xcodeproj
+                          -scheme ${projectName()} build`;
+    let buildCommand = spawnSync('xctool', buildArguments.split(' '));
+
+    console.log(buildCommand.stderr.toString());
+    console.log(buildCommand.stdout.toString());
   }
 
   if (fs.existsSync(buildPathIos)) {
     fs.unlinkSync(buildPathIos);
   }
 
+  console.log(latestBuildPath());
   process.chdir(`${buildDirIos}/${latestBuildPath()}/Build/Products/Debug-iphonesimulator`);
   let zip = spawnSync('zip', ['-r', buildPathIos,  '.']);
+  console.log(zip.stderr.toString());
+  console.log(zip.stdout.toString());
 }
 
 async function uploadBuild(filePath) {

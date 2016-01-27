@@ -15,4 +15,5 @@ program
   .command('query', 'Run a graphql query from a file')
   .command('delete-all', 'Delete all data!')
   .command('list-hooks', 'List Reindex webhooks')
+  .command('create-devices', 'Create devices')
   .parse(process.argv);

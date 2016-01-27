@@ -22,7 +22,9 @@ async function run() {
   const platform = program.platform || 'ios';
 
   console.log(`Bundling javascript for ${platform}`);
-  let bundleCommand = spawnSync('react-native', ['bundle', '--entry-file', './index.ios.js', '--platform', platform, '--bundle-output', jsPath]);
+  let bundleArguments = `bundle --entry-file ./index.${platform}.js --dev false --platform ${platform} --bundle-output ${jsPath}`;
+  console.log(`react-native ${bundleArguments}`);
+  let bundleCommand = spawnSync('react-native', bundleArguments.split(" "));
 
   if (bundleCommand.stderr) {
     console.log(bundleCommand.stderr.toString());
