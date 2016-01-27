@@ -17,7 +17,7 @@ import {capitalize} from './util';
 //   var CREDENTIALS = {"X-ApiId": globalConf.auth.apiId, "X-ApiSecret": globalConf.auth.apiSecret}
 // }
 
-const REINDEX_DATABASE = process.env['REPLOY_ENV'] === 'development' ? "practical-improvement-29" : "practical-improvement-29"
+const REINDEX_DATABASE = process.env['REPLOY_ENV'] === 'development' ? "molecular-ununpentium-702" : "molecular-ununpentium-702"
 
 let db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
 
