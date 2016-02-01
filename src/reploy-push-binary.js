@@ -14,6 +14,7 @@ import {capitalize} from './util';
 
 program
   .option('-p, --platform [platform]', 'Platform: "ios" or "android"')
+  .option('-s, --skip', 'Skip the build step - just zip and upload the previous build')
   .parse(process.argv);
 
 const platform = program.platform || 'ios';
@@ -23,7 +24,7 @@ const superagent = require('superagent-promise')(require('superagent'), Promise)
 const buildDirIos = path.join(homedir(), '/Library/Developer/Xcode/DerivedData');
 const buildPathIos = `/tmp/${projectName()}-ios.zip`;
 
-const buildPathAndroid = path.join(process.cwd(), '/android/app/build/outputs/apk/app-debug.apk');
+const buildPathAndroid = path.join(process.cwd(), '/android/app/build/outputs/apk/app-release.apk');
 
 if (!appConf) {
   console.log('Please run first: reploy create-app');
@@ -34,6 +35,8 @@ async function run() {
 
   if (platform == 'ios') {
     createBuildZipFile();
+  } else {
+    buildAndroid();
   }
 
   const buildPath = platform == 'ios' ? buildPathIos : buildPathAndroid;
@@ -43,7 +46,7 @@ async function run() {
   try {
     let uploadId = await uploadBuild(buildPath);
 
-    console.log('Updating build on Reploy...');
+    console.log(`Uploading ${platform} build to Reploy...`);
     let appetizePrivateKey = application[`appetizePrivateKey${capitalize(platform)}`];
     if (appetizePrivateKey) {
       await uploadToAppetize(uploadId, {appetizePrivateKey, platform});
@@ -52,10 +55,19 @@ async function run() {
       await addAppetizeIdToReploy(appetizeData, platform);
     }
 
-    addBuildtoReploy(uploadId);
+    addBuildtoReploy(uploadId, platform);
   } catch (error) {
     console.log(error);
   }
+}
+
+function buildAndroid() {
+  console.log("Building android release...")
+  if (!program.skip) {
+    process.chdir('./android');
+    spawnSync('./gradlew', ['assembleRelease']);
+  }
+  console.log("Done!")
 }
 
 async function addAppetizeIdToReploy(appetizeData, platform) {
@@ -69,8 +81,13 @@ async function addAppetizeIdToReploy(appetizeData, platform) {
   await mutation('updateApplication', data);
 }
 
-async function addBuildtoReploy(uploadId) {
-  let response = await mutation('createBinaryUpload', {uploadId: uploadId, user: appConf.app.user, application: appConf.app.id, createdAt: '@TIMESTAMP'});
+async function addBuildtoReploy(uploadId, platform) {
+  let response = await mutation('createBinaryUpload', {
+    uploadId: uploadId,
+    user: appConf.app.user,
+    platform: platform,
+    application: appConf.app.id,
+    createdAt: '@TIMESTAMP'});
 }
 
 function projectName() {
@@ -102,25 +119,35 @@ function latestBuildPath() {
 
 function createBuildZipFile() {
 
-  if (!latestBuildPath()) {
-    console.error('No builds available. Building now...');
-    let buildArguments = `xctool CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= PROVISIONING_PROFILE=
-                          -destination platform=iOS Simulator,name=iPhone 6,OS=9.2
-                          -sdk iphonesimulator
-                          -project ios/${projectName()}.xcodeproj
-                          -scheme ${projectName()} build`;
-    let buildCommand = spawnSync('xctool', buildArguments.split(' '));
+  spawnSync('mkdir', ['-p', `/tmp/${projectName()}.xcode`]);
+
+  console.error('Building project...');
+  let buildArguments = `CODE_SIGNING_REQUIRED=NO
+CODE_SIGN_IDENTITY=
+PROVISIONING_PROFILE=
+CONFIGURATION_BUILD_DIR=/tmp/${projectName()}.xcode
+-destination
+platform=iOS Simulator,name=iPhone 6,OS=9.2
+-sdk
+iphonesimulator
+-configuration
+Release
+-project
+ios/${projectName()}.xcodeproj
+-scheme
+${projectName()}
+build`;
+
+  if (!program.skip) {
+    let buildArray = buildArguments.split("\n");
+    console.log(buildArray);
+    let buildCommand = spawnSync('xctool', buildArray);
 
     console.log(buildCommand.stderr.toString());
     console.log(buildCommand.stdout.toString());
   }
 
-  if (fs.existsSync(buildPathIos)) {
-    fs.unlinkSync(buildPathIos);
-  }
-
-  console.log(latestBuildPath());
-  process.chdir(`${buildDirIos}/${latestBuildPath()}/Build/Products/Debug-iphonesimulator`);
+  process.chdir(`/tmp/${projectName()}.xcode`);
   let zip = spawnSync('zip', ['-r', buildPathIos,  '.']);
   console.log(zip.stderr.toString());
   console.log(zip.stdout.toString());
