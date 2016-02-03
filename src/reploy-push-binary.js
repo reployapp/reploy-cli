@@ -62,12 +62,11 @@ async function run() {
 }
 
 function buildAndroid() {
-  console.log("Building android release...")
+  console.log('Building android release...');
   if (!program.skip) {
     process.chdir('./android');
-    spawnSync('./gradlew', ['assembleRelease']);
+    spawnSync('./gradlew', ['assembleRelease'], {stdio: 'inherit'});
   }
-  console.log("Done!")
 }
 
 async function addAppetizeIdToReploy(appetizeData, platform) {
@@ -87,7 +86,8 @@ async function addBuildtoReploy(uploadId, platform) {
     user: appConf.app.user,
     platform: platform,
     application: appConf.app.id,
-    createdAt: '@TIMESTAMP'});
+    createdAt: '@TIMESTAMP',
+  });
 }
 
 function projectName() {
@@ -139,18 +139,12 @@ ${projectName()}
 build`;
 
   if (!program.skip) {
-    let buildArray = buildArguments.split("\n");
-    console.log(buildArray);
-    let buildCommand = spawnSync('xctool', buildArray);
-
-    console.log(buildCommand.stderr.toString());
-    console.log(buildCommand.stdout.toString());
+    let buildArray = buildArguments.split('\n');
+    let buildCommand = spawnSync('xctool', buildArray, {stdio: 'inherit'});
   }
 
   process.chdir(`/tmp/${projectName()}.xcode`);
-  let zip = spawnSync('zip', ['-r', buildPathIos,  '.']);
-  console.log(zip.stderr.toString());
-  console.log(zip.stdout.toString());
+  let zip = spawnSync('zip', ['-r', buildPathIos,  '.'], {stdio: 'inherit'});
 }
 
 async function uploadBuild(filePath) {
