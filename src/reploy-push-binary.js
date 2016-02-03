@@ -141,6 +141,10 @@ build`;
   if (!program.skip) {
     let buildArray = buildArguments.split('\n');
     let buildCommand = spawnSync('xctool', buildArray, {stdio: 'inherit'});
+    if (buildCommand.status != 0) {
+      console.log(`Build failed: ${buildCommand.error}`);
+      process.exit(1);
+    }
   }
 
   process.chdir(`/tmp/${projectName()}.xcode`);
