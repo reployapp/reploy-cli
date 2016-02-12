@@ -1,7 +1,8 @@
 #!/usr/bin/env node --harmony
+require('babel-polyfill');
 
 import program from 'commander';
-import 'babel-polyfill';
+
 
 program
   .version('0.1.0')

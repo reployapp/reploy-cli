@@ -1,6 +1,7 @@
 #!/usr/bin/env node --harmony
 
 import program from 'commander';
+import 'babel-polyfill';
 import config from 'home-config';
 import {appConf, appVersion} from './environment';
 import timeago from 'timeago';

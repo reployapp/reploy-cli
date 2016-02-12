@@ -1,5 +1,7 @@
 #!/usr/bin/env node --harmony
 
+require('babel-polyfill');
+
 import program from 'commander';
 import { spawnSync } from 'child_process';
 import path from 'path';
@@ -44,6 +46,9 @@ async function run() {
   let application = await getApplication(appConf.app.id);
 
   try {
+    console.log(platform)
+    console.log(buildPath)
+
     let uploadId = await uploadBuild(buildPath);
 
     console.log(`Uploading ${platform} build to Reploy...`);
@@ -62,8 +67,8 @@ async function run() {
 }
 
 function buildAndroid() {
-  console.log('Building android release...');
   if (!program.skip) {
+    console.log('Building android release...');
     process.chdir('./android');
     spawnSync('./gradlew', ['assembleRelease'], {stdio: 'inherit'});
   }
@@ -90,13 +95,17 @@ async function addBuildtoReploy(uploadId, platform) {
   });
 }
 
-function projectName() {
-  let files = fs.readdirSync(path.join(process.cwd(), 'ios'));
-
+function findFileIn(name, path) {
+  let files = fs.readdirSync(path);
   let file = find(files, (filename) => {
-    return filename.indexOf('xcodeproj') > -1;
+    return filename.indexOf(name) > -1;
   });
 
+  return file;
+}
+
+function projectName() {
+  let file = iosProjectFile();
   return file.split('.')[0];
 }
 
@@ -117,6 +126,18 @@ function latestBuildPath() {
   return simulatorBuildPaths[0];
 }
 
+function iosProjectFile() {
+  let file = null;
+
+  file = findFileIn('xcodeproj', path.join(process.cwd(), 'ios'));
+
+  if (!file) {
+    file = findFileIn('xcodeproj', process.cwd());
+  }
+
+  return file;
+}
+
 function createBuildZipFile() {
 
   spawnSync('mkdir', ['-p', `/tmp/${projectName()}.xcode`]);
@@ -133,7 +154,7 @@ iphonesimulator
 -configuration
 Release
 -project
-ios/${projectName()}.xcodeproj
+${iosProjectFile()}
 -scheme
 ${projectName()}
 build`;
@@ -153,7 +174,8 @@ build`;
 
 async function uploadBuild(filePath) {
 
-  let bar = new Progress(':percent uploaded', { total: fs.statSync(buildPathIos).size });
+  console.log(`Uploading build from ${filePath}...`)
+  let bar = new Progress(':percent uploaded', { total: fs.statSync(filePath).size });
 
   try {
     let response = await superagent.post('https://upload.uploadcare.com/base/')
