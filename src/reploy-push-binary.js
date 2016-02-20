@@ -40,6 +40,7 @@ async function run() {
   }
 
   const buildPath = platform == 'ios' ? buildPathIos : buildPathAndroid;
+
   let application = await getApplication(appConf.app.id);
 
   try {

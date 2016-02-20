@@ -6,14 +6,16 @@ import {capitalize} from './util';
 
 var REINDEX_DATABASE = 'molecular-ununpentium-702';
 var REINDEX_TOKEN = process.env.REINDEX_TOKEN_DEV;
+var REPLOY_TOKEN = process.env.REPLOY_TOKEN_DEV;
 
 if (process.env.REPLOY_ENV == 'production') {
   var REINDEX_DATABASE = 'practical-improvement-29';
   var REINDEX_TOKEN = process.env.REINDEX_TOKEN_PROD;
+  var REPLOY_TOKEN = process.env.REPLOY_TOKEN;
 }
 
 const db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
-const TOKEN = process.env.REPLOY_ADMIN ? REINDEX_TOKEN : process.env.REPLOY_TOKEN;
+const TOKEN = process.env.REPLOY_ADMIN ? REINDEX_TOKEN : REPLOY_TOKEN;
 
 if (!TOKEN) {
   if (!process.env.REPLOY_ADMIN) {
