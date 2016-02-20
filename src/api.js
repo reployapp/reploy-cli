@@ -4,12 +4,12 @@ import Reindex from 'reindex-js';
 import process from 'process';
 import {capitalize} from './util';
 
-if (process.env.REPLOY_ENV === 'development') {
-  var REINDEX_DATABASE = 'molecular-ununpentium-702';
-  var REINDEX_TOKEN = process.env.REINDEX_TOKEN_DEV;
-} else {
+if (process.env.REPLOY_ENV === 'production') {
   var REINDEX_DATABASE = 'practical-improvement-29';
   var REINDEX_TOKEN = process.env.REINDEX_TOKEN_PROD;
+} else {
+  var REINDEX_DATABASE = 'molecular-ununpentium-702';
+  var REINDEX_TOKEN = process.env.REINDEX_TOKEN_DEV;
 }
 
 const db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);

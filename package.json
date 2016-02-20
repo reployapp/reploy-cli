@@ -34,6 +34,6 @@
     "superagent-bluebird-promise": "^3.0.0",
     "superagent-promise": "^1.1.0",
     "timeago": "^1.5.2",
-    "validator": "^4.8.0"
+    "validator": "^4.9.0"
   }
 }
