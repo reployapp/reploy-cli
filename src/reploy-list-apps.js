@@ -2,7 +2,6 @@
 
 import program from 'commander';
 import {query} from './api';
-import 'babel-polyfill';
 
 async function run() {
   try {

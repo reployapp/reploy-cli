@@ -1,7 +1,7 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/env node
 
-require('babel-polyfill');
-
+import 'babel-polyfill';
+require('babel-polyfill')
 import program from 'commander';
 import { spawnSync } from 'child_process';
 import path from 'path';
@@ -42,12 +42,10 @@ async function run() {
   }
 
   const buildPath = platform == 'ios' ? buildPathIos : buildPathAndroid;
-
+  console.log("skipped")
   let application = await getApplication(appConf.app.id);
 
   try {
-    console.log(platform)
-    console.log(buildPath)
 
     let uploadId = await uploadBuild(buildPath);
 
@@ -71,6 +69,8 @@ function buildAndroid() {
     console.log('Building android release...');
     process.chdir('./android');
     spawnSync('./gradlew', ['assembleRelease'], {stdio: 'inherit'});
+  } else {
+    console.log("Skipping android build...")
   }
 }
 
@@ -97,16 +97,18 @@ async function addBuildtoReploy(uploadId, platform) {
 
 function findFileIn(name, path) {
   let files = fs.readdirSync(path);
+
   let file = find(files, (filename) => {
     return filename.indexOf(name) > -1;
   });
 
-  return file;
+  return file ? `${path}/${file}` : null;
 }
 
 function projectName() {
   let file = iosProjectFile();
-  return file.split('.')[0];
+  let segments = file.split('/');
+  return segments[segments.length - 1].split('.')[0];
 }
 
 function latestBuildPath() {
@@ -134,7 +136,6 @@ function iosProjectFile() {
   if (!file) {
     file = findFileIn('xcodeproj', process.cwd());
   }
-
   return file;
 }
 
