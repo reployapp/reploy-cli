@@ -4,42 +4,33 @@ import Reindex from 'reindex-js';
 import process from 'process';
 import {capitalize} from './util';
 
-// TODO: setup JWT in Reindex for new users for api authentication
-
-// if (globalConf && globalConf.auth) {
-//
-//   if (!globalConf.auth.apiId) {
-//     cli.error(`It looks like you're not setup yet to use Reploy. Get started with: reploy setup`);
-//     process.exit();
-//   }
-//
-//   var CREDENTIALS = {"X-ApiId": globalConf.auth.apiId, "X-ApiSecret": globalConf.auth.apiSecret}
-// }
-
-const REINDEX_DATABASE = process.env['REPLOY_ENV'] === 'development' ? "molecular-ununpentium-702" : "molecular-ununpentium-702"
-
-let db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
-
-if (process.env["REINDEX_ADMIN"]) {
-  db.setToken(process.env["REINDEX_TOKEN"])
-} else if (process.env["REPLOY_TOKEN"]) {
-  db.setToken(process.env["REPLOY_TOKEN"])
+if (process.env.REPLOY_ENV === 'development') {
+  var REINDEX_DATABASE = 'molecular-ununpentium-702';
+  var REINDEX_TOKEN = process.env.REINDEX_TOKEN_DEV;
 } else {
-  console.log("Please set REPLOY_TOKEN in your shell environment.")
+  var REINDEX_DATABASE = 'practical-improvement-29';
+  var REINDEX_TOKEN = process.env.REINDEX_TOKEN_PROD;
+}
+
+const db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
+const TOKEN = process.env.REPLOY_ADMIN ? REINDEX_TOKEN : process.env.REPLOY_TOKEN;
+
+if (!TOKEN) {
+  console.log('Please set REPLOY_TOKEN in your shell environment. You\'ll find that token in your Settings page: https://app.reploy.io/settings.');
   process.exit(1);
 }
+
+db.setToken(TOKEN);
 
 export default db;
 
 export async function getApplication(id) {
-  console.log("getApp");
-
   let response = await query(`
     applicationById(id: "${id}") {
       id,
       appetizePrivateKeyIos,
       appetizePrivateKeyAndroid
-  }`, {viewer: false})
+  }`, {viewer: false});
   return response.applicationById;
 }
 

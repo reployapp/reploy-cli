@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-import 'babel-polyfill';
-require('babel-polyfill')
 import program from 'commander';
 import { spawnSync } from 'child_process';
 import path from 'path';

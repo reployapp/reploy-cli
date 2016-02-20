@@ -1,7 +1,6 @@
 #!/usr/bin/env node --harmony
 
 import {mutation, query, getApplication} from './api';
-import 'babel-polyfill';
 
 export const DEVICES = [
   { make: 'iphone4s', platform: 'ios', os: '8.4', label: 'iPhone4s - 8.4', width: 320, height: 480, defaultScale: "75"},
