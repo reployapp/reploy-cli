@@ -1,6 +1,6 @@
 {
   "name": "reploy-cli",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Manage React Native applications. Supports live updates.",
   "author": "Joshua Sierles",
   "main": "lib/reploy.js",
