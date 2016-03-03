@@ -9,8 +9,8 @@ import {appConf, appVersion} from './environment';
 import {find, filter} from 'lodash';
 import homedir from 'os-homedir';
 import FormData from 'form-data';
-import Progress from 'progress';
 import {capitalize} from './util';
+import cli from 'cli';
 
 program
   .option('-p, --platform [platform]', 'Platform: "ios" or "android"')
@@ -141,7 +141,6 @@ function createBuildZipFile() {
 
   spawnSync('mkdir', ['-p', `/tmp/${projectName()}.xcode`]);
 
-  console.error('Building project...');
   let buildArguments = `CODE_SIGNING_REQUIRED=NO
 CODE_SIGN_IDENTITY=
 PROVISIONING_PROFILE=
@@ -159,6 +158,7 @@ ${projectName()}
 build`;
 
   if (!program.skip) {
+    console.log('Building project...');
     let buildArray = buildArguments.split('\n');
     let buildCommand = spawnSync('xctool', buildArray, {stdio: 'inherit'});
     if (buildCommand.status != 0) {
@@ -167,23 +167,22 @@ build`;
     }
   }
 
+  console.log("Zipping build before upload...")
   process.chdir(`/tmp/${projectName()}.xcode`);
-  let zip = spawnSync('zip', ['-r', buildPathIos,  '.'], {stdio: 'inherit'});
+  let zip = spawnSync('zip', ['-r', buildPathIos,  '.']);
 }
 
 async function uploadBuild(filePath) {
 
   console.log(`Uploading build from ${filePath}...`)
-  let bar = new Progress(':percent uploaded', { total: fs.statSync(filePath).size });
+  let size = fs.statSync(filePath).size;
 
   try {
     let response = await superagent.post('https://upload.uploadcare.com/base/')
       .field('UPLOADCARE_PUB_KEY', '9e1ace5cb5be7f20d38a')
       .attach('file', filePath)
       .on('progress', (progress) => {
-        if (!bar.completed) {
-          bar.tick(progress.loaded);
-        }
+        cli.progress(progress.loaded / progress.total);
       });
 
     return (response.body.file);
