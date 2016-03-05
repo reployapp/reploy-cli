@@ -5,8 +5,8 @@
   "author": "Joshua Sierles",
   "main": "lib/reploy.js",
   "scripts": {
-    "build": "rm -rf ./lib && node_modules/.bin/babel -d lib/ src/ && chmod 755 lib/*",
-    "watch": "node_modules/.bin/babel -d lib/ src/ --watch",
+    "build": "rm -rf ./lib && node_modules/babel-cli/bin/babel.js -d lib/ src/ && chmod 755 lib/*",
+    "watch": "node_modules/babel-cli/bin/babel.js -d lib/ src/ --watch",
     "pre-publish": "npm run build"
   },
   "bin": {
