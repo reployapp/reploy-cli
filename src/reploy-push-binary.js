@@ -46,17 +46,18 @@ async function run() {
   try {
 
     let uploadId = await uploadBuild(buildPath);
+    let appetizeData = null;
 
     console.log(`Uploading ${platform} build to Reploy...`);
     let appetizePrivateKey = application[`appetizePrivateKey${capitalize(platform)}`];
     if (appetizePrivateKey) {
-      await uploadToAppetize(uploadId, {appetizePrivateKey, platform});
+      appetizeData = await uploadToAppetize(uploadId, {appetizePrivateKey, platform});
     } else {
-      let appetizeData = await uploadToAppetize(uploadId, {platform});
+      appetizeData = await uploadToAppetize(uploadId, {platform});
       await addAppetizeIdToReploy(appetizeData, platform);
     }
 
-    addBuildtoReploy(uploadId, platform);
+    addBuildtoReploy(uploadId, appetizeData, platform);
   } catch (error) {
     console.log(error);
   }
@@ -77,18 +78,20 @@ async function addAppetizeIdToReploy(appetizeData, platform) {
     id: appConf.app.id,
   };
 
+  console.log(appetizeData);
   data[`appetizePublicKey${capitalize(platform)}`] = appetizeData.publicKey;
   data[`appetizePrivateKey${capitalize(platform)}`] = appetizeData.privateKey;
 
   await mutation('updateApplication', data);
 }
 
-async function addBuildtoReploy(uploadId, platform) {
+async function addBuildtoReploy(uploadId, appetizeData, platform) {
   let response = await mutation('createBinaryUpload', {
     uploadId: uploadId,
     user: appConf.app.user,
     platform: platform,
     application: appConf.app.id,
+    versionCode: appetizeData.versionCode,
     createdAt: '@TIMESTAMP',
   });
 }
@@ -156,6 +159,7 @@ ${iosProjectFile()}
 -scheme
 ${projectName()}
 build`;
+
 
   if (!program.skip) {
     console.log('Building project...');

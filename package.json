@@ -35,5 +35,9 @@
     "superagent-promise": "^1.1.0",
     "timeago": "^1.5.2",
     "validator": "^4.9.0"
+  },
+  "dependencies": {
+    "fanoutpub": "^1.0.3",
+    "faye": "^1.1.2"
   }
 }
