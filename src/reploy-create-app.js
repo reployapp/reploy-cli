@@ -1,22 +1,23 @@
 #!/usr/bin/env node --harmony
 
-import program from 'commander';
-import { spawnSync } from 'child_process';
 import path from 'path';
-import {appConf, appName} from './environment';
-import {mutation, query} from './api';
+import program from 'commander';
 import readlineSync from 'readline-sync';
 
+import { appConf, appName} from './environment';
+import { mutation, query} from './api';
+import { checkForReact } from './util';
+import { spawnSync } from 'child_process';
+
 async function run() {
-  if (appConf.app && appConf.app.id) {
-
+  if (!checkForReact()) {
+    console.log("Did you mean to run this inside a react-native project? ");
+  } else if (appConf.app && appConf.app.id) {
     console.log("You already created this app. Its id is " + appConf.app.id);
-
   } else {
 
     let name = readlineSync.question('Give this app a name: ')
     let result = await query("user { id }")
-    console.log(result.user.id)
     let app = await mutation("createApplication", {
       name: name,
       user: result.user.id,
@@ -32,6 +33,12 @@ async function run() {
     appConf.save()
 
     console.log(`Created app with name ${name} and id ${app.id}`)
+    if (readlineSync.keyInYN('Do you want to build and push this project to Reploy?')) {
+      spawnSync('reploy', ['push-binary'], {stdio: 'inherit'});
+    } else {
+      process.exit(1);
+    }
+
   }
 }
 
