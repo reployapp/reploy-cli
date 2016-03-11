@@ -6,12 +6,12 @@ import path from 'path';
 import {appConf, appName} from './environment';
 import {mutation, query} from './api';
 import readlineSync from 'readline-sync';
-
+import { checkForReact } from './util'
 async function run() {
-  if (appConf.app && appConf.app.id) {
-
+  if (!checkForReact()) {
+    console.log("Did you mean to run this inside a react-native project? ");
+  } else if (appConf.app && appConf.app.id) {
     console.log("You already created this app. Its id is " + appConf.app.id);
-
   } else {
 
     let name = readlineSync.question('Give this app a name: ')
