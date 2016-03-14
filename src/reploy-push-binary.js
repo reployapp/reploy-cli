@@ -212,8 +212,7 @@ async function uploadToAppetize(uploadId, options = {appetizePrivateKey: null, p
   }
 
   try {
-    let result = await superagent.post('https://webtask.it.auth0.com/api/run/wt-joshua-diluvia_net-0')
-    .set('Authorization', `Bearer ${webtaskToken}`)
+    let result = await superagent.post('https://webtask.it.auth0.com/api/run/wt-joshua-diluvia_net-0/createOnAppetize')
     .send({params});
     return result.body;
   } catch (error) {
