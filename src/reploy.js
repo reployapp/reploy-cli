@@ -19,6 +19,7 @@ if (process.env.REPLOY_ADMIN) {
   .command('delete-all', 'Delete all data!')
   .command('list-hooks', 'List Reindex webhooks')
   .command('create-devices', 'Create devices')
+  .command('invite-beta', 'Invite beta user');
 } else {
   command = reploy;
 }
