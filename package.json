@@ -37,7 +37,6 @@
     "validator": "^4.9.0"
   },
   "dependencies": {
-    "fanoutpub": "^1.0.3",
-    "faye": "^1.1.2"
+    "fanoutpub": "^1.0.3"
   }
 }
