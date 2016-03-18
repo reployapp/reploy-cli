@@ -26,29 +26,12 @@ export const DEVICES = [
   { make: 'nexus7', platform: 'android', os: '6.0', label: 'Nexus 7 - 6.0', width: 600, height: 960},
   { make: 'nexus9', platform: 'android', os: '4.4', label: 'Nexus 9 - 4.4', width: 768, height: 1024},
   { make: 'nexus9', platform: 'android', os: '5.1', label: 'Nexus 9 - 5.1', width: 768, height: 1024},
-  { make: 'nexus9', platform: 'android', os: '6.0', label: 'Nexus  9 - 6.0', width: 768, height: 1024},
+  { make: 'nexus9', platform: 'android', os: '6.0', label: 'Nexus 9 - 6.0', width: 768, height: 1024},
 ];
 
-async function deleteAllDevices()  {
-  try {
-    let result = await query(`
-      allDevices(first: 100) {
-        nodes {
-          id,
-        }
-      }
-    `);
-    console.log(result.allDevices)
-    result.allDevices.nodes.forEach((device) => {
-      mutation('deleteDevice', { id: device.id });
-    });
-  } catch(error) {
-    console.log(error);
-  }
-}
 
-async function createDevice(device, index) {
-  return await mutation('createDevice', {
+async function createDevice(device, index, existingDevices) {
+  let data = {
     order: index,
     label: device.label,
     make: device.make,
@@ -58,17 +41,34 @@ async function createDevice(device, index) {
     height: device.height,
     createdAt: '@TIMESTAMP',
     updatedAt: '@TIMESTAMP',
-  });
+  };
+
+  let existingDevice = existingDevices.find(existingDevice => existingDevice.label == device.label);
+
+  let operation =  existingDevice ? 'update' : 'create';
+
+  if (operation == 'update') {
+    data.id = existingDevice.id;
+  }
+
+  console.log(`Processing ${operation} for ${data.label}`);
+  return await mutation(`${operation}Device`, data);
 }
 
 async function run() {
   try {
-    console.log('Deleting data...')
-    let deleteEntires = await deleteAllDevices();
-    console.log('Done!')
-    console.log('Creating new entries...')
 
-    let createEntries = await Promise.all(DEVICES.map(createDevice));
+    const result = await query(`
+      allDevices(first: 100) {
+        nodes {
+          id,
+          label
+        }
+      }
+    `);
+
+    console.log('Creating or updating devices...')
+    await Promise.all(DEVICES.map((device, index) => createDevice(device, index, result.allDevices.nodes)));
     console.log('Done!');
   } catch (error) {
     console.error(error)
