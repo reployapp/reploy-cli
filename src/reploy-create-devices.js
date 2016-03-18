@@ -23,7 +23,7 @@ export const DEVICES = [
   { make: 'hammerhead', platform: 'android', os: '5.1.1', label: 'Real Nexus 5 - 6.0', width: 540, height: 960},
   { make: 'nexus7', platform: 'android', os: '4.4', label: 'Nexus 7 - 4.4', width: 600, height: 960},
   { make: 'nexus7', platform: 'android', os: '5.1', label: 'Nexus 7 - 5.1', width: 600, height: 960},
-  { make: 'nexus7', platform: 'android', os: '6.0', label: 'Nexus 7 - 6.0', width: 600, height: 960},
+  { make: 'nexus7', platform: 'android', os: '6.0', label: 'Nexus 7 - 6.0', width: 600, height: 960, default: true},
   { make: 'nexus9', platform: 'android', os: '4.4', label: 'Nexus 9 - 4.4', width: 768, height: 1024},
   { make: 'nexus9', platform: 'android', os: '5.1', label: 'Nexus 9 - 5.1', width: 768, height: 1024},
   { make: 'nexus9', platform: 'android', os: '6.0', label: 'Nexus 9 - 6.0', width: 768, height: 1024},
@@ -41,6 +41,7 @@ async function createDevice(device, index, existingDevices) {
     height: device.height,
     createdAt: '@TIMESTAMP',
     updatedAt: '@TIMESTAMP',
+    default: device.default
   };
 
   let existingDevice = existingDevices.find(existingDevice => existingDevice.label == device.label);
