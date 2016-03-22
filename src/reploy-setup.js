@@ -1,18 +1,15 @@
 #!/usr/bin/env node --harmony
 
-import program from 'commander';
-import {globalConf, configFilename} from './environment';
 import cli from 'cli';
-import tty from 'tty';
+import program from 'commander';
 import readlineSync from 'readline-sync';
-import api from './api';
 
-
-
-if (!globalConf.auth) {
-
-  var email = readlineSync.questionEMail('Enter your email address:', {limitMessage: 'Please enter a valid email.'})
-  // TODO: add an 'email verification code' to login here
+import { globalConf, configFilename } from './environment';
+import { checkForConfig, createReployToken } from './util'
+console.log(globalConf)
+if (!globalConf) {
+  let token = readlineSync.question('Enter your API token: ');
+  createReployToken(token);
 } else {
-  cli.ok(`You're already setup for reploy! To start over, remove the ~/${configFilename} file.`)
+  cli.ok(`You're already setup for reploy!\n\n Need to reset your token?.\n Use the following command. 'reploy --set-token {token}'`);
 }
