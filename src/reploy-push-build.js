@@ -1,23 +1,25 @@
 #!/usr/bin/env node
 
 import program from 'commander';
-import { spawnSync } from 'child_process';
+import homedir from 'os-homedir';
+
+import cli from 'cli';
 import path from 'path';
 import fs  from 'fs';
-import {mutation, query, getApplication} from './api';
-import {appConf, appVersion} from './environment';
-import {find, filter} from 'lodash';
-import homedir from 'os-homedir';
-import FormData from 'form-data';
-import {capitalize} from './util';
-import cli from 'cli';
+
+import { appConf, appVersion} from './environment';
+import { capitalize } from './util';
+import { find, filter } from 'lodash';
+import { getApplication, query, mutation } from './api';
+import { platformPrompt } from './util';
+import { spawnSync } from 'child_process';
 
 program
   .option('-p, --platform [platform]', 'Platform: "ios" or "android"')
   .option('-s, --skip', 'Skip the build step - just zip and upload the previous build')
   .parse(process.argv);
 
-const platform = program.platform || 'ios';
+const platform = program.platform || platformPrompt();
 
 const superagent = require('superagent-promise')(require('superagent'), Promise);
 
@@ -33,7 +35,6 @@ if (!fs.existsSync(appConf.__filename)) {
 }
 
 async function run() {
-
   if (platform == 'ios') {
     createBuildZipFile();
   } else {
