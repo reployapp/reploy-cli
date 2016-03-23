@@ -28,7 +28,7 @@ const buildPathAndroid = path.join(process.cwd(), '/android/app/build/outputs/ap
 
 
 if (!fs.existsSync(appConf.__filename)) {
-  console.log(`\nCouldn't find the Reploy config file named .reploy at the application root.\nDid you run 'reploy create-app'?\n`);
+  console.log(`\nCouldn't find the Reploy config file named .reploy at the application root.\nDid you run 'reploy create'?\n`);
   process.exit(1);
 }
 
