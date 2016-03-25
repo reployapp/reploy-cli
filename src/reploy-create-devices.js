@@ -11,8 +11,8 @@ export const DEVICES = [
   { make: 'iphone6', platform: 'ios', os: '9.0', label: 'iPhone6 - 9.0', width: 375, height: 668},
   { make: 'iphone6plus', platform: 'ios', os: '8.4', label: 'iPhone6+ - 8.4', width: 621, height: 1104},
   { make: 'iphone6plus', platform: 'ios', os: '9.0', label: 'iPhone6+ - 9.0', width: 621, height: 1104},
-  { make: 'iphone6s', platform: 'ios', os: '9.0', label: 'iPhone6s - 9.0', width: 375, height: 627, default: true},
-  { make: 'iphone6splus', platform: 'ios', os: '9.0', label: 'iPhone6s - 9.0', width: 621, height: 1104},
+  { make: 'iphone6s', platform: 'ios', os: '9.0', label: 'iPhone6s - 9.0', width: 375, height: 668, phoneWidth: 416, phoneHeight: 870, screenOffsetTop: 100, screenOffsetLeft: 21, default: true},
+  { make: 'iphone6splus', platform: 'ios', os: '9.0', label: 'iPhone6s+ - 9.0', width: 621, height: 1104},
   { make: 'ipadair', platform: 'ios', os: '8.4', label: 'iPad Air - 8.4', width: 768, height: 1024},
   { make: 'ipadair', platform: 'ios', os: '9.0', label: 'iPad Air - 9.0', width: 768, height: 1024},
   { make: 'ipadair2', platform: 'ios', os: '9.0', label: 'iPad Air 2 - 9.0', width: 768, height: 1024},
@@ -30,7 +30,6 @@ export const DEVICES = [
   { make: 'nexus9', platform: 'android', os: '6.0', label: 'Nexus 9 - 6.0', width: 768, height: 1024},
 ];
 
-
 async function createDevice(device, index, existingDevices) {
   let data = {
     order: index,
@@ -40,9 +39,13 @@ async function createDevice(device, index, existingDevices) {
     platform: device.platform,
     width: device.width,
     height: device.height,
+    phoneHeight: device.phoneHeight,
+    phoneWidth: device.phoneWidth,
+    screenOffsetTop: device.screenOffsetTop,
+    screenOffsetLeft: device.screenOffsetLeft,
     createdAt: '@TIMESTAMP',
     updatedAt: '@TIMESTAMP',
-    default: device.default
+    default: device.default,
   };
 
   let existingDevice = existingDevices.find(existingDevice => existingDevice.label == device.label);
@@ -54,6 +57,7 @@ async function createDevice(device, index, existingDevices) {
   }
 
   console.log(`Processing ${operation} for ${data.label}`);
+  console.log(data);
   return await mutation(`${operation}Device`, data);
 }
 
