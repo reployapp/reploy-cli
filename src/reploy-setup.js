@@ -4,12 +4,13 @@ import cli from 'cli';
 import program from 'commander';
 import readlineSync from 'readline-sync';
 
-import { globalConf, configFilename } from './environment';
-import { checkForConfig, createReployToken } from './util'
-console.log(globalConf)
-if (!globalConf) {
-  let token = readlineSync.question('Enter your API token: ');
-  createReployToken(token);
+import { globalConfExists, globalConf, configFilename } from './environment';
+import { checkForConfig, createReployToken } from './util';
+
+if (!globalConf.token) {
+  let token = readlineSync.question('Enter your API token from https://app.reploy.io/settings: ');
+  globalConf.token = token;
+  globalConf.save();
 } else {
-  cli.ok(`You're already setup for reploy!\n\n Need to reset your token?.\n Use the following command. 'reploy --set-token {token}'`);
+  console.log(`You\'re already setup for reploy! Need to reset your token?. Remove the file at ~/${globalConf.__filename} and run this command again.`);
 }

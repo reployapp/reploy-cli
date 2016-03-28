@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs';
 import readlineSync from 'readline-sync';
 import { configFilename, globalConf } from './environment';
 

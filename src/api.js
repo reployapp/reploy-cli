@@ -1,32 +1,11 @@
-import {configFilename, globalConf} from './environment';
+import {apiEndpoint, configFilename, globalConf} from './environment';
 import cli from 'cli';
 import Reindex from 'reindex-js';
 import process from 'process';
 import {capitalize} from './util';
 
-var REINDEX_DATABASE = 'molecular-ununpentium-702';
-var REINDEX_TOKEN = process.env.REINDEX_TOKEN_DEV;
-var REPLOY_TOKEN = process.env.REPLOY_TOKEN_DEV;
-
-if (process.env.REPLOY_ENV == 'production') {
-  var REINDEX_DATABASE = 'practical-improvement-29';
-  var REINDEX_TOKEN = process.env.REINDEX_TOKEN_PROD;
-  var REPLOY_TOKEN = process.env.REPLOY_TOKEN;
-}
-
-const db = new Reindex(`https://${REINDEX_DATABASE}.myreindex.com`);
-const TOKEN = process.env.REPLOY_ADMIN ? REINDEX_TOKEN : REPLOY_TOKEN;
-
-if (!TOKEN) {
-  if (!process.env.REPLOY_ADMIN) {
-    console.log('Please set REPLOY_TOKEN in your shell environment. You\'ll find that token in your Settings page: https://app.reploy.io/settings.');
-  } else {
-    console.log('Please set REPLOY_TOKEN_DEV and REPLOY_TOKEN_PROD in your shell environment');
-  }
-  process.exit(1);
-}
-
-db.setToken(TOKEN);
+const db = new Reindex(`https://${apiEndpoint}`);
+db.setToken(globalConf.token);
 
 export default db;
 
