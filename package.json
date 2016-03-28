@@ -37,6 +37,7 @@
     "validator": "^4.9.0"
   },
   "dependencies": {
+    "babel-preset-stage-2": "^6.5.0",
     "fanoutpub": "^1.0.3"
   }
 }
