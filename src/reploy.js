@@ -1,7 +1,6 @@
 #!/usr/bin/env node --harmony
 
 import program from 'commander';
-import { createReployToken } from './util';
 import { version } from '../package.json';
 
 let command = program
