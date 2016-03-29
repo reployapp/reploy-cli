@@ -11,5 +11,5 @@ if (!globalConf.token) {
   globalConf.token = token;
   globalConf.save();
 } else {
-  console.log(`You\'re already setup for reploy! Need to reset your token?. Remove the file at ~/${globalConf.__filename} and run this command again.`);
+  cli.info(`You\'re already setup for reploy! Need to reset your token?. Remove the file at ~/${globalConf.__filename} and run this command again.`);
 }
