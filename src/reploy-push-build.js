@@ -25,6 +25,8 @@ program
 
 const superagent = require('superagent-promise')(require('superagent'), Promise);
 
+const platform = program.platform || platformPrompt();
+
 if (!fs.existsSync(appConf.__filename)) {
   cli.error(`\nCouldn't find the Reploy config file named .reploy at the application root.\nDid you run 'reploy create'?\n`);
   process.exit(1);
@@ -32,17 +34,12 @@ if (!fs.existsSync(appConf.__filename)) {
 
 async function run() {
 
-  let platform = null;
-
-  if (!program.platform) {
-    platform = platformPrompt();
-  }
-
   if (platform == 'ios') {
     buildIOS();
   } else {
     buildAndroid();
   }
+
   uploadBuild(platform, {buildPath: program.buildPath});
 }
 

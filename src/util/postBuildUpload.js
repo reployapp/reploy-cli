@@ -29,6 +29,7 @@ export async function uploadBuild(platform, options = {}) {
     }
 
     let application = await getApplication(appConf.app.id);
+
     let uploadId = await uploadToUploadCare(buildPath);
     let appetizeData = null;
 
@@ -91,7 +92,6 @@ async function addAppetizeIdToReploy(appetizeData, platform) {
     id: appConf.app.id,
   };
 
-  console.log(appetizeData);
   data[`appetizePublicKey${capitalize(platform)}`] = appetizeData.publicKey;
   data[`appetizePrivateKey${capitalize(platform)}`] = appetizeData.privateKey;
 
