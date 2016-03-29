@@ -34,7 +34,7 @@ async function run() {
 
     console.log(`Created app with name ${name} and id ${app.id}`)
     if (readlineSync.keyInYN('Do you want to build and push this project to Reploy?')) {
-      spawnSync('reploy', ['push-binary'], {stdio: 'inherit'});
+      spawnSync('reploy', ['push-build'], {stdio: 'inherit'});
     } else {
       process.exit(1);
     }
