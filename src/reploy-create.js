@@ -8,6 +8,7 @@ import { appConf, appName} from './environment';
 import { mutation, query} from './api';
 import { checkForReact } from './util';
 import { spawnSync } from 'child_process';
+import {platformPrompt} from './util';
 
 async function run() {
   if (!checkForReact()) {
@@ -34,7 +35,8 @@ async function run() {
 
     console.log(`Created app with name ${name} and id ${app.id}`)
     if (readlineSync.keyInYN('Do you want to build and push this project to Reploy?')) {
-      spawnSync('reploy', ['push-build'], {stdio: 'inherit'});
+      let platform = platformPrompt();
+      spawnSync('reploy', ['push-build', '-p', platform], {stdio: 'inherit'});
     } else {
       process.exit(1);
     }
