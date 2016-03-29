@@ -2,8 +2,9 @@
 
 import program from 'commander';
 import { version } from '../package.json';
+import cli from 'cli';
 
-let command = program
+let app = program
   .version(version)
   .command('setup', 'Configure your Reploy credentials available at https://app.reploy.io/settings')
   .command('list-apps', 'List javascript bundle versions')
@@ -11,4 +12,14 @@ let command = program
   .command('push-build', 'Push an iOS or Android build')
   .command('list-js', 'List javascript bundle versions');
 
-command.parse(process.argv);
+app.parse(process.argv);
+
+let commandExists = app.commands.some((cmd) => {
+  return cmd._name == app.args[0];
+});
+
+if (app.args[0] && !commandExists) {
+  console.log();
+  cli.error(`That's not a command!`);
+  app.outputHelp();
+};

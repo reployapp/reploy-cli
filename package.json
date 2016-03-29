@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "babel-preset-stage-2": "^6.5.0",
-    "fanoutpub": "^1.0.3"
+    "fanoutpub": "^1.0.3",
+    "optimist": "^0.6.1"
   }
 }
