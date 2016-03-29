@@ -23,8 +23,6 @@ program
   .option('-b, --buildPath [buildPath]', 'Optional build file path for custom builds')
   .parse(process.argv);
 
-const platform = program.platform || 'ios';
-
 const superagent = require('superagent-promise')(require('superagent'), Promise);
 
 if (!fs.existsSync(appConf.__filename)) {
@@ -33,6 +31,12 @@ if (!fs.existsSync(appConf.__filename)) {
 }
 
 async function run() {
+
+  let platform = null;
+
+  if (!program.platform) {
+    platform = platformPrompt();
+  }
 
   if (platform == 'ios') {
     buildIOS();
@@ -56,7 +60,8 @@ function buildIOS() {
   ];
 
   if (!program.skip) {
-    cli.info('Building project...');
+    cli.info(`Building iOS project ${xcodeProject.name}`);
+    cli.info(`Running: xcodebuild ${xcodebuildArgs.join(' ')}`);
     let buildCommand = spawnSync('xcodebuild', xcodebuildArgs, {stdio: 'inherit'});
     if (buildCommand.status != 0) {
       cli.error(`Build failed: ${buildCommand.error}`);
@@ -64,7 +69,7 @@ function buildIOS() {
     }
   }
 
-  cli.info("Zipping build before upload...")
+  cli.info("Zipping build before upload...");
   process.chdir(`/tmp/${getProjectName()}`);
   let zip = spawnSync('zip', ['-r', buildPathIos,  '.']);
 }
