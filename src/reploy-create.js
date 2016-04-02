@@ -37,9 +37,9 @@ async function run() {
     if (readlineSync.keyInYN('Do you want to build and push this project to Reploy?')) {
       let platform = platformPrompt();
       spawnSync('reploy', ['push-build', '-p', platform], {stdio: 'inherit'});
-    } else {
-      process.exit(1);
     }
+
+    console.log("To push a new build, use the 'reploy push-build' command. Type 'reploy push-build -h' for more details.");
 
   }
 }
