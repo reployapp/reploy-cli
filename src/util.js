@@ -3,6 +3,7 @@ import fs from 'fs'
 import homedir from 'os-homedir';
 import path from 'path';
 import readlineSync from 'readline-sync';
+import cli from 'cli';
 
 import findXcodeProject from './util/findXcodeProject';
 import parseIOSSimulatorsList from './util/parseIOSSimulatorsList';
@@ -15,7 +16,12 @@ export function capitalize(string) {
 
 export function checkForReact() {
   // @TODO Super basic. Can get more elaborate as needed.
-  return fs.existsSync('./node_modules/react-native');
+  if (!fs.existsSync('./node_modules/react-native')) {
+    cli.error('Did you mean to run this inside a react-native project?');
+    process.exit(1);
+  } else {
+    return;
+  }
 }
 
 export function platformPrompt() {
@@ -29,18 +35,25 @@ export function platformPrompt() {
 }
 
 export function getXcodeProject() {
-  const xcodeProject = findXcodeProject(fs.readdirSync('./ios'));
-  if (!xcodeProject) {
-   throw new Error(`Could not find Xcode project files in ios folder`);
+  if (fs.existsSync('./ios')) {
+    const xcodeProject = findXcodeProject(fs.readdirSync('./ios'));
+    if (!xcodeProject) {
+      cli.error('Could not find Xcode project files in ios folder');
+    } else {
+      return xcodeProject;
+    }
   } else {
-    return xcodeProject;
+    cli.error(`Unable to locate 'ios' directory.\nRun this command from the root directory of your react native project.`);
+    process.exit(1);
   }
 }
 
 export function getProjectName() {
-  let file = getXcodeProject().name;
-  let segments = file.split('/');
-  return segments[segments.length - 1].split('.')[0];
+  let file = getXcodeProject();
+  if (file) {
+    let segments = file.name.split('/');
+    return segments[segments.length - 1].split('.')[0];
+  }
 }
 
 export function getSimulatorBuilds() {
