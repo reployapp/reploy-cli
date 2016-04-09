@@ -1,8 +1,6 @@
 #!/usr/bin/env node --harmony
 
-import program from 'commander';
-import {query} from './api';
-
+import { query } from './api';
 async function run() {
   try {
     let result = await query(`
