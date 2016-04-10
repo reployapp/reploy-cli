@@ -10,7 +10,6 @@ let app = program
   .command('list-apps', 'List javascript bundle versions')
   .command('create', 'Add a React Native app')
   .command('push-build', 'Push an iOS or Android build')
-  .command('list-js', 'List javascript bundle versions');
 
 app.parse(process.argv);
 
