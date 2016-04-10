@@ -3,6 +3,7 @@
 import program from 'commander';
 import { version } from '../package.json';
 import cli from 'cli';
+import {globalConf} from './environment';
 
 let app = program
   .version(version)

@@ -2,6 +2,9 @@ import plist from 'plist';
 import path from 'path';
 import config from 'home-config';
 import fs from 'fs';
+import rollbar from 'rollbar';
+rollbar.init("63d2c4302f7f4fc1a580d8de4f36f590");
+rollbar.handleUncaughtExceptions("63d2c4302f7f4fc1a580d8de4f36f590", {exitOnUncaughtException: true});
 
 const ENV = process.env.REPLOY_ENV || 'production';
 
