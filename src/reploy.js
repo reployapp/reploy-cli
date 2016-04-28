@@ -11,6 +11,7 @@ let app = program
   .command('list-apps', 'List javascript bundle versions')
   .command('create', 'Add a React Native app')
   .command('push-build', 'Push an iOS or Android build')
+  .command('ci-build', 'Push an iOS or Android build via CI')
 
 app.parse(process.argv);
 
