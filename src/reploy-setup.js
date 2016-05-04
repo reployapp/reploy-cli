@@ -1,4 +1,4 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/env node
 
 import cli from 'cli';
 import readlineSync from 'readline-sync';
