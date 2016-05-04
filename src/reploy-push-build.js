@@ -25,8 +25,6 @@ program
 
 const superagent = require('superagent-promise')(require('superagent'), Promise);
 
-const platform = program.platform || platformPrompt();
-
 if (!fs.existsSync(appConf.__filename)) {
   cli.error(`\nCouldn't find the Reploy config file named .reploy at the application root.\nDid you run 'reploy create'?\n`);
   process.exit(1);
@@ -34,11 +32,14 @@ if (!fs.existsSync(appConf.__filename)) {
 
 async function run() {
 
-  if (platform == 'ios') {
-    buildIOS();
+  let platform = null;
+
+  if (program.platform) {
+    platform = program.platform;
   } else {
-    buildAndroid();
+    platform = platformPrompt();
   }
+  platform == 'ios' ? buildIOS() : buildAndroid();
 
   uploadBuild(platform, {buildPath: program.buildPath});
 }
@@ -72,6 +73,11 @@ function buildIOS() {
 }
 
 function buildAndroid() {
+  if (!fs.existsSync('./android')) {
+    cli.error("Unable to locate the 'android' directory. Run this command from the root directory of your React Native project.")
+    process.exit(1)
+  }
+
   if (!program.skip) {
     cli.info('Building android release...');
     process.chdir('./android');

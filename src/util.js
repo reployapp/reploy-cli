@@ -43,8 +43,7 @@ export function getXcodeProject() {
       return xcodeProject;
     }
   } else {
-    cli.error(`Unable to locate 'ios' directory.\nRun this command from the root directory of your react native project.`);
-    process.exit(1);
+    cli.error(`Unable to locate 'ios' directory.\nRun this command from the root directory of your React Native project.`);
   }
 }
 
