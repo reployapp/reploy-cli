@@ -3,7 +3,10 @@
 import program from 'commander';
 import { version } from '../package.json';
 import cli from 'cli';
-import {globalConf} from './environment';
+import updateNotifier from 'update-notifier';
+const pkg = require('../package.json');
+
+updateNotifier({pkg: pkg}).notify({defer: false});
 
 let app = program
   .version(version)
