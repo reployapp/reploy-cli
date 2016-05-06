@@ -7,7 +7,8 @@ import colors from 'colors';
 const table = new Table({
   head: [
     colors.cyan('Name'),
-    colors.cyan('Invitees'),
+    colors.cyan('ID'),
+    colors.cyan('Testers'),
     colors.cyan('Screenshots'),
     colors.cyan('Version')
   ],
@@ -46,6 +47,7 @@ async function run() {
       applications.nodes.forEach((app) => {
         table.push([
           app.name,
+          app.id,
           app.invitedUsers.count,
           app.screenshots.count,
           app.binaryUploads.nodes[0].versionCode
