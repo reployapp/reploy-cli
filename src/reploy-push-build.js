@@ -6,7 +6,7 @@ import homedir from 'os-homedir';
 import path from 'path';
 import fs  from 'fs';
 import cli from 'cli';
-
+import db from './api';
 import { appConf } from './environment';
 import { capitalize, getDefaultSimulator, getXcodeProject } from './util';
 import parseCommandLine from './util/parseCommandLine';
@@ -21,11 +21,14 @@ program
   .option('-p, --platform [platform]', 'Platform: "ios" or "android"')
   .option('-s, --skip', 'Skip the build step: eiter re-upload the previous build, or upload the build file specified with -b')
   .option('-b, --buildPath [buildPath]', 'Optional build file path for custom builds')
+  .option('-a, --applicationId [applicationId]', 'Your target application ID')
+  .option('-t, --token [token]', 'Your Reploy authentication token')
   .parse(process.argv);
 
-const superagent = require('superagent-promise')(require('superagent'), Promise);
-
-if (!fs.existsSync(appConf.__filename)) {
+if (program.token) {
+  db.setToken(program.token)
+}
+if (!program.applicationId && !fs.existsSync(appConf.__filename)) {
   cli.error(`\nCouldn't find the Reploy config file named .reploy at the application root.\nDid you run 'reploy create'?\n`);
   process.exit(1);
 }
@@ -41,7 +44,7 @@ async function run() {
   }
   platform == 'ios' ? buildIOS() : buildAndroid();
 
-  uploadBuild(platform, {buildPath: program.buildPath});
+  uploadBuild(platform, {buildPath: program.buildPath, applicationId: program.applicationId});
 }
 
 function buildIOS() {

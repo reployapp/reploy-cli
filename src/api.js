@@ -5,6 +5,9 @@ import process from 'process';
 import {capitalize} from './util';
 
 const db = new Reindex(`https://${apiEndpoint}`);
+
+import program from 'commander';
+
 db.setToken(globalConf.token);
 
 export default db;

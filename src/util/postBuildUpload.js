@@ -28,7 +28,7 @@ export async function uploadBuild(platform, options = {}) {
       process.exit(1);
     }
 
-    let application = await getApplication(appConf.app.id);
+    let application = await getApplication(options.applicationId || appConf.app.id);
 
     let uploadId = await uploadToUploadCare(buildPath);
     let appetizeData = null;
