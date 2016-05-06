@@ -28,8 +28,9 @@ program
 if (program.token) {
   db.setToken(program.token)
 }
+
 if (!program.applicationId && !fs.existsSync(appConf.__filename)) {
-  cli.error(`\nCouldn't find the Reploy config file named .reploy at the application root.\nDid you run 'reploy create'?\n`);
+  cli.error(`\nCouldn't find the Reploy config file named .reploy at the application root.\nRun 'reploy create' to get setup, or use the -a option to specify your ID manually. Use 'reploy list-apps' to see your application IDs.\n`);
   process.exit(1);
 }
 
