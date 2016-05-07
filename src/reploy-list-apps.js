@@ -6,13 +6,13 @@ import colors from 'colors';
 
 const table = new Table({
   head: [
-    colors.cyan('Name'),
     colors.cyan('ID'),
-    colors.cyan('Testers'),
+    colors.cyan('Name'),
     colors.cyan('Screenshots'),
+    colors.cyan('Testers'),
     colors.cyan('Version')
   ],
-  colWidths: [25, 15, 15, 15]
+  colWidths: [50, 20, 15, 10, 10]
 });
 
 async function run() {
@@ -46,10 +46,10 @@ async function run() {
     } else {
       applications.nodes.forEach((app) => {
         table.push([
-          app.name,
           app.id,
-          app.invitedUsers.count,
+          app.name,
           app.screenshots.count,
+          app.invitedUsers.count,
           app.binaryUploads.nodes[0].versionCode
         ]);
       });
