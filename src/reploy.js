@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-import program from 'commander';
-import { version } from '../package.json';
 import cli from 'cli';
+import pkg from '../package.json';
+import program from 'commander';
 import updateNotifier from 'update-notifier';
-const pkg = require('../package.json');
 
-updateNotifier({pkg: pkg}).notify({defer: false});
+const notifier = updateNotifier({pkg, lastUpdateCheck: 0, updateCheckInterval: 1000})
+notifier.notify({defer: false});
 
-let app = program
-  .version(version)
+const app = program
+  .version(pkg.version)
   .command('setup', 'Configure your Reploy credentials available at https://app.reploy.io/settings')
   .command('list-apps', 'List javascript bundle versions')
   .command('create', 'Add a React Native app')
@@ -17,7 +17,7 @@ let app = program
 
 app.parse(process.argv);
 
-let commandExists = app.commands.some((cmd) => {
+const commandExists = app.commands.some((cmd) => {
   return cmd._name == app.args[0];
 });
 
