@@ -1,20 +1,14 @@
 #!/usr/bin/env node
 
 import program from 'commander';
-import homedir from 'os-homedir';
-
-import path from 'path';
 import fs  from 'fs';
 import cli from 'cli';
 import db from './api';
+
 import { appConf } from './environment';
-import { capitalize, getDefaultSimulator, getXcodeProject } from './util';
-import parseCommandLine from './util/parseCommandLine';
-
-import { find, filter } from 'lodash';
+import { buildPathIos, uploadBuild } from './util/postBuildUpload';
+import { getDefaultSimulator, getXcodeProject } from './util';
 import { getProjectName, platformPrompt } from './util';
-import { buildPathAndroid, buildPathIos, uploadBuild } from './util/postBuildUpload';
-
 import { spawnSync } from 'child_process';
 
 program
@@ -43,7 +37,10 @@ async function run() {
   } else {
     platform = platformPrompt();
   }
-  platform == 'ios' ? buildIOS() : buildAndroid();
+
+  if (!program.buildPath) {
+    platform === 'ios' ? buildIOS() : buildAndroid();
+  }
 
   uploadBuild(platform, {buildPath: program.buildPath, applicationId: program.applicationId});
 }
