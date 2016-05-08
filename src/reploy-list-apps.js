@@ -9,10 +9,9 @@ const table = new Table({
     colors.cyan('ID'),
     colors.cyan('Name'),
     colors.cyan('Screenshots'),
-    colors.cyan('Testers'),
-    colors.cyan('Version')
+    colors.cyan('Testers')
   ],
-  colWidths: [50, 20, 15, 10, 10]
+  colWidths: [15, 20, 15, 10]
 });
 
 async function run() {
@@ -31,11 +30,6 @@ async function run() {
             invitedUsers {
               count
             }
-            binaryUploads(last: 1) {
-              nodes {
-               versionCode
-              }
-            }
           }
         }
       }`);
@@ -50,8 +44,7 @@ async function run() {
           app.urlToken,
           app.name,
           app.screenshots.count,
-          app.invitedUsers.count,
-          app.binaryUploads.nodes[0].versionCode
+          app.invitedUsers.count
         ]);
       });
       console.log(table.toString());
