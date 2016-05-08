@@ -11,6 +11,8 @@ const superagent = require('superagent-promise')(require('superagent'), Promise)
 export const buildPathIos = `/tmp/${getProjectName()}-ios.zip`;
 export const buildPathAndroid = path.join(process.cwd(), '/android/app/build/outputs/apk/app-release.apk');
 
+let application = null;
+
 export async function uploadBuild(platform, options = {}) {
 
   try {
@@ -28,7 +30,7 @@ export async function uploadBuild(platform, options = {}) {
       process.exit(1);
     }
 
-    let application = await getApplication(options.applicationId || appConf.app.id);
+    application = await getApplication(options.applicationId);
 
     let uploadId = await uploadToUploadCare(buildPath);
     let appetizeData = null;
@@ -88,8 +90,10 @@ async function uploadToAppetize(uploadId, options = {appetizePrivateKey: null, p
 }
 
 async function addAppetizeIdToReploy(appetizeData, platform) {
+  console.log('adding to reploy');
+  console.log(application);
   let data = {
-    id: appConf.app.id,
+    id: application.id,
   };
 
   data[`appetizePublicKey${capitalize(platform)}`] = appetizeData.publicKey;
@@ -99,11 +103,12 @@ async function addAppetizeIdToReploy(appetizeData, platform) {
 }
 
 async function addBuildtoReploy(uploadId, appetizeData, platform) {
+
   let response = await mutation('createBinaryUpload', {
     uploadId: uploadId,
-    user: appConf.app.user,
+    user: application.user.id,
     platform: platform,
-    application: appConf.app.id,
+    application: application.id,
     versionCode: appetizeData.versionCode,
     createdAt: '@TIMESTAMP',
   });

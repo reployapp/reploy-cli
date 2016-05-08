@@ -22,8 +22,9 @@ async function run() {
         applications {
           count,
           nodes {
-            id
-            name
+            id,
+            urlToken,
+            name,
             screenshots {
               count,
             }
@@ -46,7 +47,7 @@ async function run() {
     } else {
       applications.nodes.forEach((app) => {
         table.push([
-          app.id,
+          app.urlToken,
           app.name,
           app.screenshots.count,
           app.invitedUsers.count,

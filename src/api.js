@@ -1,4 +1,4 @@
-import {apiEndpoint, configFilename, globalConf} from './environment';
+import {apiEndpoint, configFilename, globalConf, appConf} from './environment';
 import cli from 'cli';
 import Reindex from 'reindex-js';
 import process from 'process';
@@ -12,14 +12,18 @@ db.setToken(globalConf.token);
 
 export default db;
 
-export async function getApplication(id) {
+export async function getApplication(id = null) {
   let response = await query(`
-    applicationById(id: "${id}") {
+    applicationByUrlToken(urlToken: "${id || appConf.app.id}") {
       id,
+      urlToken,
       appetizePrivateKeyIos,
-      appetizePrivateKeyAndroid
+      appetizePrivateKeyAndroid,
+      user {
+        id
+      }
   }`, {viewer: false});
-  return response.applicationById;
+  return response.applicationByUrlToken;
 }
 
 export async function currentUser() {
