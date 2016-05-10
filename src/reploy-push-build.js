@@ -12,13 +12,19 @@ import { getProjectName, platformPrompt } from './util';
 import { spawnSync } from 'child_process';
 
 program
-  .option('-p, --platform [platform]', 'Platform: "ios" or "android"')
-  .option('-s, --skip', 'Skip the build step: eiter re-upload the previous build, or upload the build file specified with -b')
-  .option('-b, --buildPath [buildPath]', 'Optional build file path for custom builds')
-  .option('-a, --applicationId [applicationId]', 'Your target application ID')
-  .option('-t, --token [token]', 'Your Reploy authentication token')
+  .option('-p, --platform [platform]', 'Platform: "ios" or "android". REQUIRED.')
+  .option('-a, --applicationId [applicationId]', 'Your application ID on Reploy. Use \'reploy list-apps\' to get it.')
+  .option('-t, --token [token]', 'Your Reploy authentication token.')
+  .option('-b, --buildPath [buildPath]', 'Optional build file path for custom builds.')
+  .option('-s, --skip', 'Skip the build step: eiter re-upload the previous build, or upload the build file specified by -b.')
   .option('-n, --name [name]', 'Name this build - i.e.: PR-201, v1.0, a3dffc')
   .parse(process.argv);
+
+if (!program.platform || program.platform.length == 0) {
+  console.log();
+  cli.error("Please specify 'ios' or 'android' with the -p option.");
+  program.outputHelp();
+}
 
 if (program.token) {
   db.setToken(program.token)

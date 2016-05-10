@@ -2,7 +2,6 @@ import child_process from 'child_process'
 import fs from 'fs'
 import homedir from 'os-homedir';
 import path from 'path';
-import readlineSync from 'readline-sync';
 import cli from 'cli';
 
 import findXcodeProject from './util/findXcodeProject';
@@ -21,16 +20,6 @@ export function checkForReact() {
     process.exit(1);
   } else {
     return;
-  }
-}
-
-export function platformPrompt() {
-  const options = ['iOS', 'Android'];
-  const index = readlineSync.keyInSelect(options, 'Choose a platform?');
-  if (!options[index]) {
-    process.exit(1)
-  } else {
-    return options[index].toLowerCase();
   }
 }
 
