@@ -26,12 +26,13 @@ export function checkForReact() {
 
 export function platformPrompt() {
   const options = ['iOS', 'Android'];
-  const index = readlineSync.keyInSelect(options, 'Choose a platform?');
-  if (!options[index]) {
-    process.exit(1)
-  } else {
-    return options[index].toLowerCase();
-  }
+  return 'android'
+  // const index = readlineSync.keyInSelect(options, 'Choose a platform?');
+  // if (!options[index]) {
+  //   process.exit(1)
+  // } else {
+  //   return options[index].toLowerCase();
+  // }
 }
 
 export function getXcodeProject() {
