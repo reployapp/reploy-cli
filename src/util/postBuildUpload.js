@@ -16,7 +16,7 @@ let application = null;
 export async function uploadBuild(platform, options = {}) {
 
   try {
-    const buildPath = options.buildPath ? path.join(process.cwd(), options.buildPath) : (platform === 'ios' ? buildPathIos : buildPathAndroid);
+    const buildPath = options.buildPath ? options.buildPath : (platform === 'ios' ? buildPathIos : buildPathAndroid);
     try {
       fs.accessSync(buildPath, fs.F_OK);
     } catch (e) {

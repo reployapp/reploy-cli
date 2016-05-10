@@ -13,11 +13,11 @@ import Random from 'random-js';
 checkForReact();
 
 async function run() {
+
   if (appConf.app && appConf.app.id) {
     console.log(`You already created this app with ID ${appConf.app.id}`);
   } else {
-    // let name = readlineSync.question('Give this app a name: ');
-    let name = null;
+    let name = require('readline-sync').question('Give this app a name: ');
     let result = await query("user { id }");
     let urlToken = Random().string(10);
     let app = await mutation("createApplication", {
@@ -35,10 +35,10 @@ async function run() {
     appConf.save();
 
     cli.info(`Created app with name ${name} and ID ${urlToken}`);
-    // if (readlineSync.keyInYN('Do you want to build and push this project to Reploy?')) {
-    //   let platform = platformPrompt();
-    //   spawnSync('reploy', ['push-build', '-p', platform], {stdio: 'inherit'});
-    // }
+    if (readlineSync.keyInYN('Do you want to build and push this project to Reploy?')) {
+      let platform = platformPrompt();
+      spawnSync('reploy', ['push-build', '-p', platform], {stdio: 'inherit'});
+    }
     console.log("To push a new build, use the 'reploy push-build' command. Type 'reploy push-build -h' for more details.");
   }
 }
