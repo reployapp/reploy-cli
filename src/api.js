@@ -6,8 +6,6 @@ import {capitalize} from './util';
 
 const db = new Reindex(`https://${apiEndpoint}`);
 
-import program from 'commander';
-
 db.setToken(globalConf.token);
 
 export default db;
@@ -68,3 +66,16 @@ export async function mutation(name, input) {
     process.exit(1);
   }
 }
+
+async function fixAppId() {
+  // temporary, until everyone stops using the old app ID format
+  if (appConf && appConf.app.id && appConf.app.id.length > 10) {
+    let result = await query(`applicationById(id: "${appConf.app.id}") { urlToken }`, {viewer: false});
+    appConf.app = {
+      id: result.applicationById.urlToken
+    }
+    appConf.save();
+  }
+}
+
+fixAppId();
