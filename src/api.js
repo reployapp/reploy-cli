@@ -16,7 +16,7 @@ export default db;
 
 export async function getApplication(id = null) {
   cli.debug(`getting application ${id}`)
-  cli.debug(db)
+  console.log(db)
   let res = await query('user { email, id }');
   console.log(res.user)
   let response = await query(`
