@@ -17,6 +17,7 @@ program
   .option('-t, --token [token]', 'Your Reploy authentication token.')
   .option('-b, --buildPath [buildPath]', 'Optional build file path for custom builds.')
   .option('-s, --skip', 'Skip the build step: eiter re-upload the previous build, or upload the build file specified by -b.')
+  .option('-n, --name [name]', 'Name this build - i.e.: PR-201, v1.0, a3dffc')
   .parse(process.argv);
 
 if (!program.platform || program.platform.length == 0) {
@@ -48,7 +49,7 @@ async function run() {
     platform === 'ios' ? buildIOS() : buildAndroid();
   }
 
-  uploadBuild(platform, {buildPath: program.buildPath, applicationId: program.applicationId});
+  uploadBuild(platform, {buildPath: program.buildPath, applicationId: program.applicationId, name: program.name});
 }
 
 function buildIOS() {

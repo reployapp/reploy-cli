@@ -31,27 +31,15 @@ export async function uploadBuild(platform, options = {}) {
     }
 
     application = await getApplication(options.applicationId);
-
     let uploadId = await uploadToUploadCare(buildPath);
-    let appetizeData = null;
-
-    console.log(`Uploading ${platform} build to Reploy...`);
-    let appetizePrivateKey = application[`appetizePrivateKey${capitalize(platform)}`];
-    if (appetizePrivateKey) {
-      appetizeData = await uploadToAppetize(uploadId, {appetizePrivateKey, platform});
-    } else {
-      appetizeData = await uploadToAppetize(uploadId, {platform});
-      await addAppetizeIdToReploy(appetizeData, platform);
-    }
-    addBuildtoReploy(uploadId, appetizeData, platform);
+    addBuildtoReploy(uploadId, platform, options.name);
   } catch (error) {
     console.log(error);
   }
 }
 
 async function uploadToUploadCare(filePath) {
-  console.log(`Uploading build from ${filePath}...`)
-  let size = fs.statSync(filePath).size;
+  console.log(`Uploading build from ${filePath}...`);
 
   try {
     let response = await superagent.post('https://upload.uploadcare.com/base/')
@@ -68,48 +56,17 @@ async function uploadToUploadCare(filePath) {
   }
 }
 
-async function uploadToAppetize(uploadId, options = {appetizePrivateKey: null, platform: 'ios'}) {
-  console.log(`Finalizing upload for platform ${options.platform}`);
-
-  let params = {
-    url: `https://ucarecdn.com/${uploadId}/file.zip`,
-    platform: options.platform,
-  };
-
-  if (options.appetizePrivateKey) {
-    params.privateKey = options.appetizePrivateKey;
-  }
-
+async function addBuildtoReploy(uploadId, platform, name = null) {
   try {
-    let result = await superagent.post('https://webtask.it.auth0.com/api/run/wt-joshua-diluvia_net-0/createOnAppetize')
-    .send({params});
-    return result.body;
-  } catch (error) {
-    console.log(error);
+    await mutation('createBinaryUpload', {
+      uploadId: uploadId,
+      user: application.user.id,
+      platform: platform,
+      name: name,
+      application: application.id,
+      createdAt: '@TIMESTAMP',
+    });
+  } catch(error) {
+    console.log(error)
   }
-}
-
-async function addAppetizeIdToReploy(appetizeData, platform) {
-  console.log('adding to reploy');
-  console.log(application);
-  let data = {
-    id: application.id,
-  };
-
-  data[`appetizePublicKey${capitalize(platform)}`] = appetizeData.publicKey;
-  data[`appetizePrivateKey${capitalize(platform)}`] = appetizeData.privateKey;
-
-  await mutation('updateApplication', data);
-}
-
-async function addBuildtoReploy(uploadId, appetizeData, platform) {
-
-  let response = await mutation('createBinaryUpload', {
-    uploadId: uploadId,
-    user: application.user.id,
-    platform: platform,
-    application: application.id,
-    versionCode: appetizeData.versionCode,
-    createdAt: '@TIMESTAMP',
-  });
 }
