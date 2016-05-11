@@ -37,12 +37,12 @@ async function run() {
     const { applications } = result.user;
 
     if (applications.count === 0) {
-      console.log('Uh oh! No applications found. \nPlease make sure you\'ve created an app and that your accounts token is set in /~.reploy');
+      console.log('Uh oh! No applications found. \nPlease make sure you\'ve created an app, and that your account token is set in ~/.reploy');
     } else {
       applications.nodes.forEach((app) => {
         table.push([
-          app.urlToken,
-          app.name,
+          app.urlToken || "",
+          app.name || "",
           app.screenshots.count,
           app.invitedUsers.count
         ]);
