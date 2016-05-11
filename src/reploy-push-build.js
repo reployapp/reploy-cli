@@ -30,7 +30,6 @@ if (!program.platform || program.platform.length == 0) {
 if (program.token) {
   db.setToken(program.token)
   cli.debug(`supplied token ${program.token}`)
-  console.log(db)
 }
 
 if (!program.applicationId && !fs.existsSync(appConf.__filename)) {
