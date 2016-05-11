@@ -18,7 +18,6 @@ program
   .option('-b, --buildPath [buildPath]', 'Optional build file path for custom builds.')
   .option('-s, --skip', 'Skip the build step: eiter re-upload the previous build, or upload the build file specified by -b.')
   .option('-n, --name [name]', 'Name this build - i.e.: PR-201, v1.0, a3dffc')
-  .option('-d, --debug', 'Display useful debugging info')
   .parse(process.argv);
 
 if (!program.platform || program.platform.length == 0) {
@@ -29,7 +28,6 @@ if (!program.platform || program.platform.length == 0) {
 
 if (program.token) {
   db.setToken(program.token)
-  cli.debug(`supplied token ${program.token}`)
 }
 
 if (!program.applicationId && !fs.existsSync(appConf.__filename)) {

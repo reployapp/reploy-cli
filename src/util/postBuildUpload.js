@@ -40,6 +40,7 @@ export async function uploadBuild(platform, options = {}) {
 
 async function uploadToUploadCare(filePath) {
   console.log(`Uploading build from ${filePath}...`);
+
   try {
     let response = await superagent.post('https://upload.uploadcare.com/base/')
       .field('UPLOADCARE_PUB_KEY', '9e1ace5cb5be7f20d38a')
@@ -48,7 +49,6 @@ async function uploadToUploadCare(filePath) {
         cli.progress(progress.loaded / progress.total);
       });
 
-    cli.debug(`Upload id ${response.body.file}`)
     return (response.body.file);
 
   } catch (error) {
