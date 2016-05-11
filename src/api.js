@@ -11,12 +11,12 @@ cli.debug(`global token ${globalConf.token}`)
 if (globalConf && globalConf.token) {
   db.setToken(globalConf.token);
 }
+console.log(db)
 
 export default db;
 
 export async function getApplication(id = null) {
   cli.debug(`getting application ${id}`)
-  console.log(db)
   let res = await query('user { email, id }');
   console.log(res.user)
   let response = await query(`

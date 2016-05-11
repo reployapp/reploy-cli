@@ -31,7 +31,7 @@ export async function uploadBuild(platform, options = {}) {
     }
     cli.debug(`getting application ${options.applicationId}`)
     application = await getApplication(options.applicationId);
-    cli.debug(application)
+    console.log(application)
     let uploadId = await uploadToUploadCare(buildPath);
     cli.debug(`uploadId ${uploadId}`)
     addBuildtoReploy(uploadId, platform, options.name);
