@@ -29,9 +29,11 @@ export async function uploadBuild(platform, options = {}) {
       }
       process.exit(1);
     }
-
+    cli.debug(`getting application ${options.applicationId}`)
     application = await getApplication(options.applicationId);
+    cli.debug(application)
     let uploadId = await uploadToUploadCare(buildPath);
+    cli.debug(`uploadId ${uploadId}`)
     addBuildtoReploy(uploadId, platform, options.name);
   } catch (error) {
     console.log(error);
@@ -57,6 +59,7 @@ async function uploadToUploadCare(filePath) {
 }
 
 async function addBuildtoReploy(uploadId, platform, name = null) {
+  cli.debug(application)
   try {
     await mutation('createBinaryUpload', {
       uploadId: uploadId,
@@ -67,6 +70,7 @@ async function addBuildtoReploy(uploadId, platform, name = null) {
       createdAt: '@TIMESTAMP',
     });
   } catch(error) {
+    cli.debug('error adding build to Reploy')
     console.log(error)
   }
 }
