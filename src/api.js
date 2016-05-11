@@ -9,14 +9,14 @@ cli.debug(`endpoint ${apiEndpoint}`)
 cli.debug(`global token ${globalConf.token}`)
 
 if (globalConf && globalConf.token) {
-  db.setToken(globalConf.token);
+  db.setToken(globalConf.token);  
 }
 
 export default db;
 
 export async function getApplication(id = null) {
   cli.debug(`getting application ${id}`)
-  cli.debug(db)
+
   let response = await query(`
     applicationByUrlToken(urlToken: "${id || appConf.app.id}") {
       id,
