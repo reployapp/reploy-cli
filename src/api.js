@@ -80,6 +80,9 @@ export async function mutation(name, input) {
 async function fixAppId() {
   // temporary, until everyone stops using the old app ID format
   if (appConf && appConf.app.id && appConf.app.id.length > 10) {
+    console.log(`Fixing old app token`)
+    console.log(appConf)
+    console.log(appConf.app.id)
     let result = await query(`applicationById(id: "${appConf.app.id}") { urlToken }`, {viewer: false});
     appConf.app = {
       id: result.applicationById.urlToken
