@@ -86,4 +86,4 @@ async function fixAppId() {
   }
 }
 
-fixAppId();
+//fixAppId();
