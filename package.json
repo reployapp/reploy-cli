@@ -1,6 +1,6 @@
 {
   "name": "reploy-cli",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Command line client for use with https://reploy.io. Upload, test and comment on React Native apps.",
   "author": "Joshua Sierles",
   "main": "lib/reploy.js",
