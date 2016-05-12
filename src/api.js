@@ -41,6 +41,8 @@ export async function query(query, options = {viewer: true}) {
   let builtQuery = options.viewer ? `{viewer{${query}}}` : `{${query}}`;
   try {
     let result = await db.query(builtQuery);
+    console.log('db record inside query function')
+    console.log(db)
     if (result.errors) {
       console.log(result.errors);
       process.exit(1);
