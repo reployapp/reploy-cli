@@ -3,7 +3,7 @@
 import program from 'commander';
 import fs  from 'fs';
 import cli from 'cli';
-import db from './api';
+import db, {request} from './api';
 
 import { appConf } from './environment';
 import { buildPathIos, uploadBuild } from './util/postBuildUpload';
@@ -17,7 +17,10 @@ program
   .option('-t, --token [token]', 'Your Reploy authentication token.')
   .option('-b, --buildPath [buildPath]', 'Optional build file path for custom builds.')
   .option('-s, --skip', 'Skip the build step: eiter re-upload the previous build, or upload the build file specified by -b.')
-  .option('-n, --name [name]', 'Name this build - i.e.: PR-201, v1.0, a3dffc')
+  .option('-n, --name [name]', 'Name this build - i.e.: PR-201, v1.0, a3dffc.')
+  .option('-g, --github-token [githubToken]', 'Github token for adding a link to the Reploy build. Use only with -c.')
+  .option('-c, --commit-hash [commitHash]', 'Git commit hash whose status should be updated with the build Reploy URL.')
+  .option('-r, --repository-name [repositoryName]', 'Github repository name, i.e.: rnplay/rnplay-native.')
   .parse(process.argv);
 
 if (!program.platform || program.platform.length == 0) {
@@ -49,7 +52,29 @@ async function run() {
     platform === 'ios' ? buildIOS() : buildAndroid();
   }
 
-  uploadBuild(platform, {buildPath: program.buildPath, applicationId: program.applicationId, name: program.name});
+  await uploadBuild(platform, {buildPath: program.buildPath, applicationId: program.applicationId, name: program.name});
+
+  if (program.commitHash || program.githubToken || program.repositoryName) {
+    if (program.commitHash && program.githubToken && program.repositoryName) {
+      try {
+        let response = await request
+        .post(`https://api.github.com/repos/${program.repositoryName}/statuses/${program.commitHash}?access_token=${program.githubToken}`)
+        .send({
+          "state": "success",
+          "target_url": `https://app.reploy.io/apps/${program.applicationId || appConf.app.id}/test/${program.name}`,
+          "description": "The build is ready for testing on Reploy.",
+          "context": "continuous-integration/reploy"
+        });
+        console.log(response)
+        cli.ok(`Updated Github status for https://github.com/${program.repositoryName}/commit/${program.commitHash}`)
+
+      } catch (error) {
+        cli.error(error)
+      }
+    } else {
+      cli.error("To post a build URL to Github, please specify all of these flags: -c, -r, -g and -n")
+    }
+  }
 }
 
 function buildIOS() {
@@ -77,7 +102,7 @@ function buildIOS() {
 
   cli.info("Zipping build before upload...");
   process.chdir(`/tmp/${getProjectName()}`);
-  let zip = spawnSync('zip', ['-r', buildPathIos,  '.']);
+  spawnSync('zip', ['-r', buildPathIos,  '.']);
 }
 
 function buildAndroid() {
