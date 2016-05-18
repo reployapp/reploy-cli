@@ -1,5 +1,4 @@
-import {apiEndpoint, configFilename, globalConf, appConf} from './environment';
-import cli from 'cli';
+import {apiEndpoint, globalConf, appConf} from './environment';
 import Reindex from 'reindex-js';
 import process from 'process';
 import {capitalize} from './util';
@@ -9,6 +8,8 @@ const db = new Reindex(`https://${apiEndpoint}`);
 db.setToken(globalConf.token);
 
 export default db;
+
+export const request = require('superagent-promise')(require('superagent'), Promise);
 
 export async function getApplication(id = null) {
   let response = await query(`

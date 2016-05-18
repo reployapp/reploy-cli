@@ -2,11 +2,8 @@ import cli from 'cli';
 import fs  from 'fs';
 import path from 'path';
 import process from 'process';
-import { appConf } from '../environment';
-import { capitalize, getProjectName } from '../util';
-import { getApplication, query, mutation } from '../api';
-
-const superagent = require('superagent-promise')(require('superagent'), Promise);
+import { getProjectName } from '../util';
+import { getApplication, mutation, request } from '../api';
 
 export const buildPathIos = `/tmp/${getProjectName()}-ios.zip`;
 export const buildPathAndroid = path.join(process.cwd(), '/android/app/build/outputs/apk/app-release.apk');
@@ -42,7 +39,7 @@ async function uploadToUploadCare(filePath) {
   console.log(`Uploading build from ${filePath}...`);
 
   try {
-    let response = await superagent.post('https://upload.uploadcare.com/base/')
+    let response = await request.post('https://upload.uploadcare.com/base/')
       .field('UPLOADCARE_PUB_KEY', '9e1ace5cb5be7f20d38a')
       .attach('file', filePath)
       .on('progress', (progress) => {
