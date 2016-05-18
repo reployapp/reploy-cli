@@ -16,11 +16,13 @@ program
   .option('-a, --applicationId [applicationId]', 'Your application ID on Reploy. Use \'reploy list-apps\' to get it.')
   .option('-t, --token [token]', 'Your Reploy authentication token.')
   .option('-b, --buildPath [buildPath]', 'Optional build file path for custom builds.')
-  .option('-s, --skip', 'Skip the build step: eiter re-upload the previous build, or upload the build file specified by -b.')
+  .option('-s, --skip', 'Skip the automated build step. Either re-upload the previous build, or upload the build file specified by -b.')
   .option('-n, --name [name]', 'Name this build - i.e.: PR-201, v1.0, a3dffc.')
   .option('-g, --github-token [githubToken]', 'Github token for adding a link to the Reploy build. Use only with -c.')
   .option('-c, --commit-hash [commitHash]', 'Git commit hash whose status should be updated with the build Reploy URL.')
   .option('-r, --repository-name [repositoryName]', 'Github repository name, i.e.: rnplay/rnplay-native.')
+  .option('-u, --build-url [buildUrl]', 'URL to link to from the Reploy build screen.')
+  .option('-i, --github-api-prefix [githubApiPrefix]', 'Github API URL prefix for Github Enterprise users. Default: https://api.github.com.')
   .parse(process.argv);
 
 if (!program.platform || program.platform.length == 0) {
@@ -52,21 +54,20 @@ async function run() {
     platform === 'ios' ? buildIOS() : buildAndroid();
   }
 
-  await uploadBuild(platform, {buildPath: program.buildPath, applicationId: program.applicationId, name: program.name});
+  await uploadBuild(platform, {buildPath: program.buildPath, applicationId: program.applicationId, name: program.name, url: program.buildUrl});
 
   if (program.commitHash || program.githubToken || program.repositoryName) {
     if (program.commitHash && program.githubToken && program.repositoryName) {
       try {
         let response = await request
-        .post(`https://api.github.com/repos/${program.repositoryName}/statuses/${program.commitHash}?access_token=${program.githubToken}`)
+        .post(`${program.githubApiPrefix || "https://api.github.com/repos"}/${program.repositoryName}/statuses/${program.commitHash}?access_token=${program.githubToken}`)
         .send({
           "state": "success",
           "target_url": `https://app.reploy.io/apps/${program.applicationId || appConf.app.id}/test/${program.name}`,
-          "description": "The build is ready for testing on Reploy.",
-          "context": "continuous-integration/reploy"
+          "description": "Test this build on Reploy.",
+          "context": "ci/reploy"
         });
-        console.log(response)
-        cli.ok(`Updated Github status for https://github.com/${program.repositoryName}/commit/${program.commitHash}`)
+        cli.ok(`Updated Github status for commit ${program.commitHash} on ${program.repositoryName}.`)
 
       } catch (error) {
         cli.error(error)
