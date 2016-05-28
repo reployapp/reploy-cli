@@ -58,9 +58,10 @@ async function run() {
 
   if (program.commitHash || program.githubToken || program.repositoryName) {
     if (program.commitHash && program.githubToken && program.repositoryName) {
+      let githubApiPrefix = program.githubApiPrefix || "https://api.github.com";
       try {
-        let response = await request
-        .post(`${program.githubApiPrefix || "https://api.github.com/repos"}/${program.repositoryName}/statuses/${program.commitHash}?access_token=${program.githubToken}`)
+        await request
+        .post(`${githubApiPrefix}/repos/${program.repositoryName}/statuses/${program.commitHash}?access_token=${program.githubToken}`)
         .send({
           "state": "success",
           "target_url": `https://app.reploy.io/apps/${program.applicationId || appConf.app.id}/test/${program.name}`,
