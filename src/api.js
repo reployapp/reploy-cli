@@ -1,6 +1,5 @@
 import {apiEndpoint, globalConf, appConf} from './environment';
 import Reindex from 'reindex-js';
-import process from 'process';
 import {capitalize} from './util';
 
 const db = new Reindex(`https://${apiEndpoint}`);
